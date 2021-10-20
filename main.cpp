@@ -15,6 +15,7 @@
 
 // Engine
 #include "GLInclude.h"
+#include "RayGen.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these
@@ -22,6 +23,8 @@
 // Window
 int g_width{1360};
 int g_height{768};
+
+
 
 // Framebuffer
 std::unique_ptr<glm::vec4[]> g_frame{nullptr}; ///< Framebuffer
