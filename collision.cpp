@@ -33,4 +33,5 @@ bool collision(Ray ray, Plane ground_plane)
         x = ray.getPosition() + (t * ray.getDirection());
         return true;
     }
+    return false;
 }
