@@ -13,8 +13,10 @@ class Ray {
 
 class Plane {
 public:
-  glm::vec3 normal = {};
-  glm::vec3 p = {};
+  void init() {
+      normal = {normalx, normaly, normalz};
+      p = {px, py, pz};
+  }
   GLfloat normalx;
   GLfloat normaly;
   GLfloat normalz;
@@ -22,4 +24,6 @@ public:
   GLfloat py;
   GLfloat pz;
 private:
+  glm::vec3 normal = {};
+  glm::vec3 p = {};
 };

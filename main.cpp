@@ -45,6 +45,10 @@ void
 initialize(GLFWwindow* _window) {
   glClearColor(0.f, 0.f, 0.f, 1.f);
 
+  Plane plane;
+  sceneInput(plane);
+  std::cout << plane.normalx << " " << plane.normaly << " " << plane.normalz;
+
   g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
 }
 
