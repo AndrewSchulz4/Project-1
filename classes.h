@@ -17,8 +17,8 @@ public:
       normal = {normalx, normaly, normalz};
       p = {px, py, pz};
   }
-  gml::vec3 getN() {return normal; }
-  gml::vec3 getP() {return p; }
+  glm::vec3 getN() {return normal; }
+  glm::vec3 getP() {return p; }
   GLfloat normalx;
   GLfloat normaly;
   GLfloat normalz;
