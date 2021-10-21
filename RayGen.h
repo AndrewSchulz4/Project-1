@@ -3,7 +3,7 @@
 glm::vec3 raygen (glm::vec3 cameraPos, int row, int col, int max_wid, int max_height) {
             glm::vec3 viewDirection = {0, 0, 1}; //Temp for now
             glm::vec3 up = {0,1,0};
-            glm::vec3 right = {1,0,0}
+            glm::vec3 right = {1,0,0};
             float FOV = 3.14/4; //FOV is double this number, FOV at 90 degrees rn, (pi/4 = 45)
 
 
