@@ -80,9 +80,18 @@ draw(GLFWwindow* _window, double _currentTime) {
   // Draw
 
   // Simple static :P
-  // for(int i = 0; i < g_width*g_height; ++i)
-  //   g_frame[i] = glm::vec4(float(rand())/RAND_MAX, float(rand())/RAND_MAX,
-  //                          float(rand())/RAND_MAX, 1.f);
+
+//  for(int i = 0; i < g_width*g_height; i++)
+//    g_frame[i] = glm::vec4(float(rand())/RAND_MAX, float(rand())/RAND_MAX, float(rand())/RAND_MAX, 1.f);
+
+
+   for(int row = 0;  row < g_height; row++){
+     for (int col = 0; col < g_width; col++){
+        Ray mainRay = raygen({0,0,0}, row, col, g_width, g_height);
+        //bool hitPlane = collision(mainRay, )
+        g_frame[(row*g_width)+col] = glm::vec4(float(rand())/RAND_MAX, float(rand())/RAND_MAX, float(rand())/RAND_MAX, 1.f);
+     }      
+   }
 
   glDrawPixels(g_width, g_height, GL_RGBA, GL_FLOAT, g_frame.get());
 }
