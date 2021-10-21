@@ -16,7 +16,8 @@
 #include <iomanip>
 // Engine
 #include "GLInclude.h"
-#include "RayGen.h"
+#include "classes.h"
+#include "RayGen.h" 
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these
 

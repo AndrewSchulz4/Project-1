@@ -1,6 +1,6 @@
 
 //This function to be called from a for loop in main
-glm::vec3 raygen (glm::vec3 cameraPos, int row, int col, int max_wid, int max_height) {
+Ray raygen (glm::vec3 cameraPos, int row, int col, int max_wid, int max_height) {
             glm::vec3 viewDirection = {0, 0, 1}; //Temp for now
             glm::vec3 up = {0,1,0};
             glm::vec3 right = {1,0,0};
@@ -40,7 +40,7 @@ glm::vec3 raygen (glm::vec3 cameraPos, int row, int col, int max_wid, int max_he
             viewDirection =  glm::rotate(viewDirection, upwaysRatio, right);
 
 
-            glm::vec3 newRay = cameraPos + viewDirection; //gives us a parrellel ray pointing in view direction
+            Ray newRay(cameraPos, viewDirection); //gives us a parrellel ray pointing in view direction
            // std::cout << "newView: " << viewDirection.x << "," << viewDirection.y << "," << viewDirection.z<< std::endl;
             return newRay;
 
