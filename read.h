@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include "GLinclude.h"
-#include "classes.h"
+//#include "GLinclude.h"
+//#include "classes.h"
 
 
 Plane sceneInput(Plane& plane) {

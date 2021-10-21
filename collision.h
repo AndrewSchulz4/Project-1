@@ -1,6 +1,6 @@
 #include <iostream>
-#include "GLInclude.h"
-#include "classes.h"
+//#include "GLInclude.h"
+//#include "classes.h"
 
 using namespace std;
 

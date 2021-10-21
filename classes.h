@@ -1,4 +1,4 @@
-#include "GLInclude.h"
+//#include "GLInclude.h"
 
 class Ray {
     public:

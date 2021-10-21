@@ -16,14 +16,20 @@
 #include <iomanip>
 // Engine
 #include "GLInclude.h"
+#include "classes.h"
+#include "collision.h"
 #include "RayGen.h"
-#include "read.cpp"
+#include "read.h"
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these
 
 // Window
 int g_width{1360};
 int g_height{768};
+
+Plane mainPlane;
+sceneInput(mainPlane);
+
 
 // Framebuffer
 std::unique_ptr<glm::vec4[]> g_frame{nullptr}; ///< Framebuffer
@@ -45,9 +51,9 @@ void
 initialize(GLFWwindow* _window) {
   glClearColor(0.f, 0.f, 0.f, 1.f);
 
-  Plane plane;
-  sceneInput(plane);
-  std::cout << plane.normalx << " " << plane.normaly << " " << plane.normalz;
+  //Plane plane;
+  //sceneInput(plane);
+  //std::cout << plane.normalx << " " << plane.normaly << " " << plane.normalz;
 
   g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
 }
@@ -88,8 +94,10 @@ draw(GLFWwindow* _window, double _currentTime) {
    for(int row = 0;  row < g_height; row++){
      for (int col = 0; col < g_width; col++){
         Ray mainRay = raygen({0,0,0}, row, col, g_width, g_height);
-        //bool hitPlane = collision(mainRay, )
-        g_frame[(row*g_width)+col] = glm::vec4(float(rand())/RAND_MAX, float(rand())/RAND_MAX, float(rand())/RAND_MAX, 1.f);
+        bool hitPlane = collision(mainRay, mainPlane);
+        if (hitPlane){
+        g_frame[(row*g_width)+col] = glm::vec4(255.0f,255.0f,255.0f, 1.f);
+        }
      }      
    }
 
