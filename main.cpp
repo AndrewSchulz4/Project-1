@@ -17,6 +17,7 @@
 // Engine
 #include "GLInclude.h"
 #include "RayGen.h"
+#include "read.cpp"
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these
 
@@ -43,22 +44,6 @@ float g_framesPerSecond{0.f};
 void
 initialize(GLFWwindow* _window) {
   glClearColor(0.f, 0.f, 0.f, 1.f);
-
-  std::ifstream sceneInput;
-  sceneInput.open("scene.txt");
-  Plane plane;
-
-  GLfloat temp;
-  while(sceneInput){
-    sceneInput >> plane.normalx >> plane.normaly >> plane.normalz >> plane.px >> plane.py >> plane.pz;
-  }
-  plane.normal = {plane.normalx, plane.normaly, plane.normalz};
-  plane.p = {plane.px, plane.py, plane.pz};
-
-  std::cout << std::fixed << std::setprecision(1) << plane.normal[0] << " " << plane.normal[1] << " " << plane.normal[2] << std::endl;
-  std::cout << std::fixed << std::setprecision(1) << plane.p[0] << " " << plane.p[1] << " " << plane.p[2] << std::endl;
-
-  std::cout << std::fixed << std::setprecision(1) << plane.normalx << " " << plane.normaly << " " << plane.normalz << "\n" << plane.px << " " << plane.py << " " << plane.pz << std::endl;
 
   g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
 }
