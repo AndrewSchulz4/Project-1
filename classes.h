@@ -12,11 +12,14 @@ class Ray {
 };
 
 class Plane {
-    public:
-    glm::vec3 getN() {return normal; }
-    private:
-    //need value for a? or is it a computation?
-    glm::vec3 length;
-    glm::vec3 width;
-    glm::vec3 normal;
+public:
+  glm::vec3 normal = {};
+  glm::vec3 p = {};
+  GLfloat normalx;
+  GLfloat normaly;
+  GLfloat normalz;
+  GLfloat px;
+  GLfloat py;
+  GLfloat pz;
+private:
 };

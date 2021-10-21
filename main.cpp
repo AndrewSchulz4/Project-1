@@ -16,21 +16,10 @@
 #include <iomanip>
 // Engine
 #include "GLInclude.h"
-
+#include "RayGen.h"
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these
-class Plane {
-public:
-  glm::vec3 normal = {};
-  glm::vec3 p = {};
-  GLfloat normalx;
-  GLfloat normaly;
-  GLfloat normalz;
-  GLfloat px;
-  GLfloat py;
-  GLfloat pz;
-private:
-};
+
 // Window
 int g_width{1360};
 int g_height{768};
