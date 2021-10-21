@@ -13,12 +13,27 @@ class Ray {
 
 class Plane {
 public:
+
+  Plane(){
+    normalx,normaly,normalz,px,py,pz = 0;
+  }
   void init() {
       normal = {normalx, normaly, normalz};
       p = {px, py, pz};
   }
-  gml::vec3 getN() {return normal; }
-  gml::vec3 getP() {return p; }
+
+  void planeMaker() {
+  std::ifstream sceneInput;
+  sceneInput.open("scene.txt");    
+  while(sceneInput)
+    sceneInput >> normalx >> normaly >> normalz >> px >> py >> pz;
+    std::cout << "normal: " << "{" << normalx << "," << normaly << "," <<normalz << "point: " << px << "," << py << "," << pz << std::endl;
+  init();
+  //return plane;
+}
+
+  glm::vec3 getN() {return normal; }
+  glm::vec3 getP() {return p; }
   GLfloat normalx;
   GLfloat normaly;
   GLfloat normalz;

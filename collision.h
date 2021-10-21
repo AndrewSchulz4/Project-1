@@ -20,17 +20,17 @@ bool collision(Ray ray, Plane ground_plane)
     //solve for t
     //((a-p).n)/(d.n)
     //what is a?
-    glm::vec3 a_p = ground_plane.getP() - ray.getPosition();
-    float  ap_dot_n = glm::dot(a_p, ground_plane.getN())
+    glm::vec3 a_p = ground_plane.getP() - ray.getOrigin();
+    float  ap_dot_n = glm::dot(a_p, ground_plane.getN());
     t = ap_dot_n/n_dot_d;
 
     //a == center of plane? , n = normal to plane held in Plane
 
     //colliison occurs if d.n != 0 and t > 0
-    if(n_dot_d != 0 && t > 0 && t < 50)
+    if(n_dot_d != 0 && t > 0 && t < 1000)
     {
         //plug t into ray equation to find collision point x (will have normal n)
-        x = ray.getPosition() + (t * ray.getDirection());
+        x = ray.getOrigin() + (t * ray.getDirection());
         return true;
     }
     return false;

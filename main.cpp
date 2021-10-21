@@ -19,16 +19,14 @@
 #include "classes.h"
 #include "collision.h"
 #include "RayGen.h"
-#include "read.h"
+//#include "read.h"
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these
 
 // Window
 int g_width{1360};
 int g_height{768};
-
 Plane mainPlane;
-sceneInput(mainPlane);
 
 
 // Framebuffer
@@ -50,6 +48,9 @@ float g_framesPerSecond{0.f};
 void
 initialize(GLFWwindow* _window) {
   glClearColor(0.f, 0.f, 0.f, 1.f);
+
+  
+mainPlane.planeMaker();
 
   //Plane plane;
   //sceneInput(plane);
@@ -79,7 +80,7 @@ draw(GLFWwindow* _window, double _currentTime) {
   // Clear
   glClear(GL_COLOR_BUFFER_BIT);
 
-  for(int i = 0; i < g_width*g_height; ++i)
+  for(int i = 0; i < g_width*g_height; ++i)   
     g_frame[i] = glm::vec4(0.f, 0.0f, 0.f, 0.f);
 
   //////////////////////////////////////////////////////////////////////////////

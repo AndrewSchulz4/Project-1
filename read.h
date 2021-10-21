@@ -4,7 +4,7 @@
 //#include "classes.h"
 
 
-Plane sceneInput(Plane& plane) {
+Plane planeMaker(Plane& plane) {
   std::ifstream sceneInput;
   sceneInput.open("scene.txt");    
   while(sceneInput)
