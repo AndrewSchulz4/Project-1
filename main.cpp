@@ -14,11 +14,14 @@
 #include <thread>
 #include <fstream>
 #include <iomanip>
+#include <glm/gtx/string_cast.hpp> // allows for printing of glm::vec3
+#include <cmath> //sphere collision
 // Engine
 #include "GLInclude.h"
 #include "classes.h"
 #include "collision.h"
 #include "RayGen.h"
+#include "Lighting.h"
 //#include "read.h"
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these
@@ -96,8 +99,13 @@ draw(GLFWwindow* _window, double _currentTime) {
      for (int col = 0; col < g_width; col++){
         Ray mainRay = raygen({0,0,0}, row, col, g_width, g_height);
         bool hitPlane = collision(mainRay, mainPlane);
+        glm::vec3 direc = mainRay.getDirection();
+        glm::vec3 orig = mainRay.getOrigin();
+        std::cout << to_string(direc) << endl;
+        std::cout << to_string(orig) << endl;
         if (hitPlane){
-        g_frame[(row*g_width)+col] = glm::vec4(255.0f,255.0f,255.0f, 1.f);
+          std::cout << "hit" << endl;
+          g_frame[(row*g_width)+col] = glm::vec4(255.0f,255.0f,255.0f, 1.f);
         }
      }      
    }
@@ -126,7 +134,7 @@ run(GLFWwindow* _window) {
     g_frameRate = duration_cast<duration<float>>(time - g_frameTime).count();
     g_frameTime = time;
     g_framesPerSecond = 1.f/(g_delay + g_frameRate);
-    printf("FPS: %6.2f\n", g_framesPerSecond);
+    //printf("FPS: %6.2f\n", g_framesPerSecond);
 
     ////////////////////////////////////////////////////////////////////////////
     // Delay to fix the frame-rate
