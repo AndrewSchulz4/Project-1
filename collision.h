@@ -15,13 +15,13 @@ bool collision(Ray ray, Plane ground_plane)
     glm::vec3 x;
 
     //solve for n /*dot product*/ d as it will be used twice (efficiency)
-    float n_dot_d = glm::dot(ray.getDirection(), ground_plane.normal);
+    float n_dot_d = glm::dot(ray.getDirection(), ground_plane.getN());
 
     //solve for t
     //((a-p).n)/(d.n)
     //what is a?
-    glm::vec3 a_p = ground_plane.p - ray.getPosition();
-    float  ap_dot_n = glm::dot(a_p, ground_plane.normal)
+    glm::vec3 a_p = ground_plane.getP() - ray.getPosition();
+    float  ap_dot_n = glm::dot(a_p, ground_plane.getN())
     t = ap_dot_n/n_dot_d;
 
     //a == center of plane? , n = normal to plane held in Plane
