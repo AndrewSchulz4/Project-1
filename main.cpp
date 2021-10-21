@@ -15,6 +15,7 @@
 
 // Engine
 #include "GLInclude.h"
+#include "RayGen.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these
@@ -22,6 +23,8 @@
 // Window
 int g_width{1360};
 int g_height{768};
+
+
 
 // Framebuffer
 std::unique_ptr<glm::vec4[]> g_frame{nullptr}; ///< Framebuffer
@@ -75,7 +78,7 @@ draw(GLFWwindow* _window, double _currentTime) {
 
   // Simple static :P
   for(int i = 0; i < g_width*g_height; ++i)
-    g_frame[i] = glm::vec4(float(rand())/RAND_MAX, float(rand())/RAND_MAX,
+      g_frame[i] = glm::vec4(float(rand())/RAND_MAX, float(rand())/RAND_MAX,
                            float(rand())/RAND_MAX, 1.f);
 
   glDrawPixels(g_width, g_height, GL_RGBA, GL_FLOAT, g_frame.get());

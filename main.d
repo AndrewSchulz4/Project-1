@@ -1,1 +1,1 @@
-main.o: main.cpp GLInclude.h
+main.o: main.cpp GLInclude.h RayGen.h
