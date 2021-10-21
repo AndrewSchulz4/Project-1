@@ -27,7 +27,7 @@ bool collision(Ray ray, Plane ground_plane)
     //a == center of plane? , n = normal to plane held in Plane
 
     //colliison occurs if d.n != 0 and t > 0
-    if(n_dot_d != 0 && t > 0)
+    if(n_dot_d != 0 && t > 0 && t < 50)
     {
         //plug t into ray equation to find collision point x (will have normal n)
         x = ray.getPosition() + (t * ray.getDirection());
