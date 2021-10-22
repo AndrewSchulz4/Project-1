@@ -4,7 +4,7 @@ class Ray {
     public:
     glm::vec3 getOrigin() { return origin; }
     glm::vec3 getDirection() { return direction; }
-    Ray(glm::vec3 origin, glm::vec3 direction) { origin = origin; direction = direction;}
+    Ray(glm::vec3 ori, glm::vec3 dir) { origin = ori; direction = dir;}
     
     private:
     glm::vec3 origin;

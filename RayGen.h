@@ -1,10 +1,10 @@
 
 //This function to be called from a for loop in main
 Ray raygen (glm::vec3 cameraPos, int row, int col, int max_wid, int max_height) {
-            glm::vec3 viewDirection = {0, 0, 1}; //Temp for now
+            glm::vec3 viewDirection = {0, 0, -1}; //Temp for now
             glm::vec3 up = {0,1,0};
             glm::vec3 right = {1,0,0};
-            float FOV = 3.14/4; //FOV is double this number, FOV at 90 degrees rn, (pi/4 = 45)
+            float FOV = glm::pi<float>()/4; //FOV is double this number, FOV at 90 degrees rn, (pi/4 = 45)
 
 
             //Here we are trying to get an angle to rotate the vector 
@@ -36,12 +36,13 @@ Ray raygen (glm::vec3 cameraPos, int row, int col, int max_wid, int max_height) 
             //uncomment these for testing 
             //std::cout << "oldView: " << viewDirection.x << "," << viewDirection.y << "," << viewDirection.z << std::endl;
 
-            viewDirection =  glm::rotate(viewDirection, upwaysRatio, up);
+            viewDirection =  glm::rotate(viewDirection, sidewaysRatio, up);
             viewDirection =  glm::rotate(viewDirection, upwaysRatio, right);
 
 
             Ray newRay(cameraPos, viewDirection); //gives us a parrellel ray pointing in view direction
-           // std::cout << "newView: " << viewDirection.x << "," << viewDirection.y << "," << viewDirection.z<< std::endl;
+            //std::cout << "newView: " << viewDirection.x << "," << viewDirection.y << "," << viewDirection.z<< std::endl;
+            //std::cout << "cameraPos: " << cameraPos.x << "," << cameraPos.y << "," << cameraPos.z << std::endl;
             return newRay;
 
 
