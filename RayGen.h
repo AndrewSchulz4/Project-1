@@ -1,9 +1,8 @@
-
 //This function to be called from a for loop in main
-Ray raygen (glm::vec3 cameraPos, int row, int col, int max_wid, int max_height) {
-            glm::vec3 viewDirection = {0, 0, -1}; //Temp for now
-            glm::vec3 up = {0,1,0};
-            glm::vec3 right = {1,0,0};
+Ray raygen (Camera& cam, glm::vec3 cameraPos, int row, int col, int max_wid, int max_height) {
+            // glm::vec3 viewDirection = {0, 0, -1}; //Temp for now
+            // glm::vec3 up = {0,1,0};
+            // glm::vec3 right = {1,0,0};
             float FOV = glm::pi<float>()/4; //FOV is double this number, FOV at 90 degrees rn, (pi/4 = 45)
 
 
@@ -36,15 +35,15 @@ Ray raygen (glm::vec3 cameraPos, int row, int col, int max_wid, int max_height) 
             //uncomment these for testing 
             //std::cout << "oldView: " << viewDirection.x << "," << viewDirection.y << "," << viewDirection.z << std::endl;
 
-            viewDirection =  glm::rotate(viewDirection, sidewaysRatio, up);
-            viewDirection =  glm::rotate(viewDirection, upwaysRatio, right);
+            // viewDirection =  glm::rotate(viewDirection, sidewaysRatio, up);
+            // viewDirection =  glm::rotate(viewDirection, upwaysRatio, right);
+            cam.setViewDirection(glm::rotate(cam.getViewDirection(), sidewaysRatio, cam.getUpVector()));
+            cam.setViewDirection(glm::rotate(cam.getViewDirection(), upwaysRatio, cam.getRightVector()));
 
-
-            Ray newRay(cameraPos, viewDirection); //gives us a parrellel ray pointing in view direction
+            //Ray newRay(cameraPos, viewDirection); //gives us a parrellel ray pointing in view direction
+            Ray newRay (cameraPos, cam.getViewDirection());
+            cam.setViewDirection({0.0, 0.0, -1.0});
             //std::cout << "newView: " << viewDirection.x << "," << viewDirection.y << "," << viewDirection.z<< std::endl;
             //std::cout << "cameraPos: " << cameraPos.x << "," << cameraPos.y << "," << cameraPos.z << std::endl;
             return newRay;
-
-
-    
 }

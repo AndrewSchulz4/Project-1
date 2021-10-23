@@ -22,12 +22,11 @@
 //#include "read.h"
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these
-
+Plane mainPlane;
+Camera mainCamera;
 // Window
 int g_width{1360};
 int g_height{768};
-Plane mainPlane;
-
 
 // Framebuffer
 std::unique_ptr<glm::vec4[]> g_frame{nullptr}; ///< Framebuffer
@@ -42,15 +41,53 @@ float g_framesPerSecond{0.f};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
+void sceneInput(Plane& plane, Camera& camera) {
+  std::ifstream input;
+  std::string type;
+  GLfloat val1;
+  GLfloat val2;
+  GLfloat val3;
+  int counter;
+  input.open("scene.txt");
+  while(input >> type >> val1 >> val2 >> val3) {
+    if (type == "plane_normal") {
+      plane.setNorm({val1, val2, val3});
+    }
+    if (type == "plane_point") {
+      plane.setP({val1, val2, val3});
+    }
+    if (type == "camera_position") {
+      camera.setPosition({val1, val2, val3});
+    }
+    if (type == "camera_viewDirection"){
+      camera.setViewDirection({val1, val2, val3});
+    }
+    if (type == "camera_up") {
+      camera.setUpVector({val1, val2, val3});
+    }
+    if (type == "camera_right") {
+      camera.setAtVector({val1, val2, val3});
+    }
+  }
+  //UNCOMMENT FOR DEBUGGING
+  //   std::cout << "plane_norm: " << plane.getN()[0] << " " << plane.getN()[1] << " " << plane.getN()[2] << std::endl;
+  //   std::cout << "plane_point: " << plane.getP()[0] << " " << plane.getP()[1] << " " << plane.getP()[2] << std::endl;
 
+
+  // std::cout << "position: " << camera.getPosition()[0] << " " << camera.getPosition()[1] << " " << camera.getPosition()[2] << std::endl;
+  // std::cout << "viewDirection: " << camera.getViewDirection()[0] << " " << camera.getViewDirection()[1] << " " << camera.getViewDirection()[2] << std::endl;
+  // std::cout << "up: " << camera.getUpVector()[0] << " " << camera.getUpVector()[1] << " " << camera.getUpVector()[2] << std::endl;
+
+  // std::cout << "right: " << camera.getRightVector()[0] << " " << camera.getRightVector()[1] << " " << camera.getRightVector()[2] << std::endl;
+}
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Initialize GL settings
 void
 initialize(GLFWwindow* _window) {
   glClearColor(0.f, 0.f, 0.f, 1.f);
 
+  sceneInput(mainPlane, mainCamera);
   
-mainPlane.planeMaker();
 
   //Plane plane;
   //sceneInput(plane);
@@ -94,7 +131,7 @@ draw(GLFWwindow* _window, double _currentTime) {
 
    for(int row = 0;  row < g_height; row++){
      for (int col = 0; col < g_width; col++){
-        Ray mainRay = raygen({0,0,0}, row, col, g_width, g_height);
+        Ray mainRay = raygen(mainCamera, mainCamera.getPosition(), row, col, g_width, g_height);
         bool hitPlane = collision(mainRay, mainPlane);
         if (hitPlane){
         g_frame[(row*g_width)+col] = glm::vec4(255.0f,255.0f,255.0f, 1.f);
