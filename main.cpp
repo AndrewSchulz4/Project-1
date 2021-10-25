@@ -24,8 +24,8 @@
 // Global variables - avoid these
 Plane mainPlane;
 Camera mainCamera;
-glm::vec3 origin = {2,0,-5};
-Sphere sphere1(1.0f, origin);
+glm::vec3 origin = {0,0,-15};
+Sphere sphere1(5.0f, origin);
 // Window
 int g_width{1360};
 int g_height{768};
@@ -136,13 +136,12 @@ draw(GLFWwindow* _window, double _currentTime) {
         bool hitPlane = collision(mainRay, mainPlane);
         bool hitSphere = collision_sphere(mainRay, sphere1);
         //plane rendering as color white
-        // if (hitPlane){
-        // g_frame[(row*g_width)+col] = glm::vec4(255.0f,255.0f,255.0f, 1.f);
-        // }
+        if (hitPlane){
+        g_frame[(row*g_width)+col] = glm::vec4(255.0f,255.0f,255.0f, 1.f);
+        }
         // sphere should render as color red
         if (hitSphere){
         g_frame[(row*g_width)+col] = glm::vec4(255.0f,0.0f,0.0f, 1.f);
-        // std::cout << "hit" << std::endl;
         }
      }      
    }

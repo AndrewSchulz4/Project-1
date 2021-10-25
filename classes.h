@@ -1,5 +1,3 @@
-//#include "GLInclude.h"
-
 class Camera {
   public:
   //Camera();
