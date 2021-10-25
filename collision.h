@@ -13,7 +13,7 @@ std::ostream& operator<<(ostream& os, const glm::vec3 v) {
 //think all I need are given ray and plane as inputs
 //plane will be determined by what Darin brings as an input
 //can return bool, may want to return value of x which would be a glm::vec3?
-bool collision(Ray ray, Plane ground_plane)
+bool collision(const Ray& ray, const Plane& ground_plane)
 {
     float t;
     //vector for collision point (collision location)
@@ -51,7 +51,7 @@ bool collision(Ray ray, Plane ground_plane)
     return false;
 }
 
-bool collision_sphere(Ray ray, Sphere sphere)
+bool collision_sphere(const Ray& ray, const Sphere& sphere)
 {
     //solving for t
     float t;
