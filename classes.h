@@ -55,3 +55,13 @@ private:
   glm::vec3 p = {};
 };
 
+class Sphere {
+  public:
+  Sphere(int radius, glm::vec3 position) : radius(radius), center(position) {}
+  float getRadius() { return radius; }
+  glm::vec3 getCenter() { return center; }
+
+  private:
+  float radius;
+  glm::vec3 center;
+};

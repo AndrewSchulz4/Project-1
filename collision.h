@@ -45,7 +45,56 @@ bool collision(Ray ray, Plane ground_plane)
     {
         //plug t into ray equation to find collision point x (will have normal n)
         x = ray.getOrigin() + (t * ray.getDirection());
+        //cout << to_string(x) << endl;
         return true;
     }
     return false;
+}
+
+bool collision_sphere(Ray ray, Sphere sphere)
+{
+    //solving for t
+    float t;
+    float x;
+    float collides;
+    //retrieving values for sphere for calculations
+    float radius = sphere.getRadius();
+    glm::vec3 center = sphere.getCenter();
+    //same for the ray
+    glm::vec3 origin = ray.getOrigin();
+    glm::vec3 direction = ray.getDirection();
+    //similar to collision with plane but with substituted equation
+
+    //(x-c)^2 - r^2 = 0 c = center r = radius
+    //(p+td-c)^2 - r^2 = 0
+    //(t^2d^2) + 2td * (p-c) + (p-c)^2 - r^2 = 0
+    //A = d^2 ----- B = 2d * (p-c) ----- C = (p-c)^2-r^2
+
+    //equation to solve for A B and C
+    // std::cout << radius << " " << to_string(center) << endl;
+
+    glm::vec3 difference = origin - center;
+    float A = glm::dot(direction, direction);
+    float B = 2 * glm::dot(direction, difference);
+    float C = glm::dot(difference, difference) - (radius * radius);
+    //use discriminant and see if greater than 0, if so, collision
+    //---------------------------------
+    //B resulting in +/- 0 every ray
+    //---------------------------------
+    float collision = ((B * B) - (4 * A * C));
+    std::cout << collision << " " << B << endl;
+
+    if(collision < 0)
+    {
+      return false;
+      //std::cout << "MISS" << std::endl;
+    }
+    else{
+      //t value is minimum solution to the quadratic formula
+      //float min_t = min((-B + sqrt(collision))/(2*A), (-B - sqrt(collision))/(2*A));
+      return true;
+      //glm::vec3 normal = (x-c)/r;
+    }
+    //-------------------------------------------
+    //normal given as n = x-c/r
 }
