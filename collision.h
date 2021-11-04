@@ -71,30 +71,27 @@ bool collision_sphere(Ray& ray, Sphere& sphere)
     //A = d^2 ----- B = 2d * (p-c) ----- C = (p-c)^2-r^2
 
     //equation to solve for A B and C
-    // std::cout << radius << " " << to_string(center) << endl;
-
     glm::vec3 difference = origin - center;
     float A = glm::dot(direction, direction);
     float B = 2 * glm::dot(direction, difference);
     float C = glm::dot(difference, difference) - (radius * radius);
+
     //use discriminant and see if greater than 0, if so, collision
-    //---------------------------------
-    //B resulting in +/- 0 every ray
-    //---------------------------------
     float collision = ((B * B) - (4 * A * C));
-    //std::cout << collision << " " << A << " " << B  << " " << C << endl;
 
     if(collision < 0)
     {
       return false;
-      //std::cout << "MISS" << std::endl;
     }
     else{
       //t value is minimum solution to the quadratic formula
-      //float min_t = min((-B + sqrt(collision))/(2*A), (-B - sqrt(collision))/(2*A));
+      float min_t = min((-B + sqrt(collision))/(2*A), (-B - sqrt(collision))/(2*A));
+      //finding collision point with nearest value of t (min)
+      glm::vec3 x = origin + (min_t * direction);
+      glm::vec3 normal = (x-center)/radius;
+
       return true;
-      //glm::vec3 normal = (x-c)/r;
+      //run ADS coloring to figure out color based on collision point normal and location
+      //color(normal, ray)
     }
-    //-------------------------------------------
-    //normal given as n = x-c/r
 }

@@ -24,8 +24,8 @@
 // Global variables - avoid these
 Plane mainPlane;
 Camera mainCamera;
-glm::vec3 origin = {0,0,-15};
-Sphere sphere1(5.0f, origin);
+glm::vec3 origin = {0,0,-50};
+Sphere sphere1(10.0f, origin);
 // Window
 int g_width{1360};
 int g_height{768};
