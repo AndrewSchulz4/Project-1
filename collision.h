@@ -13,7 +13,8 @@ std::ostream& operator<<(ostream& os, const glm::vec3 v) {
 //think all I need are given ray and plane as inputs
 //plane will be determined by what Darin brings as an input
 //can return bool, may want to return value of x which would be a glm::vec3?
-glm::vec3 collision(Ray ray, Plane ground_plane)
+
+glm::vec3 collision(Ray& ray, Plane& ground_plane)
 {
     float t;
     //vector for collision point (collision location)
@@ -35,8 +36,8 @@ glm::vec3 collision(Ray ray, Plane ground_plane)
     //colliison occurs if d.n != 0 and t > 0
 
     static size_t i = 0;
-  //  std::cout << "Ray i: " << i << std::endl;
- //   std::cout << ray.getOrigin() << " , " << ray.getDirection() << std::endl;
+    //  std::cout << "Ray i: " << i << std::endl;
+    //   std::cout << ray.getOrigin() << " , " << ray.getDirection() << std::endl;
 
     //std::cout << "Plane p " << ground_plane.getP() << " , " << ground_plane.getN() << std::endl;
    // std::cout << "n_dot_d " << n_dot_d << " , " << ap_dot_n << " , " << t << std::endl;
@@ -45,7 +46,53 @@ glm::vec3 collision(Ray ray, Plane ground_plane)
     {
         //plug t into ray equation to find collision point x (will have normal n)
         x = ray.getOrigin() + (t * ray.getDirection());
-        return x;
     }
     return x;
+        //cout << to_string(x) << endl;
+
+  }
+
+glm::vec3 collision_sphere(Ray& ray, Sphere& sphere)
+{
+    //solving for t
+    float t;
+    float x;
+    float collides;
+    //retrieving values for sphere for calculations
+    float radius = sphere.getRadius();
+    glm::vec3 center = sphere.getCenter();
+    //same for the ray
+    glm::vec3 origin = ray.getOrigin();
+    glm::vec3 direction = ray.getDirection();
+    //similar to collision with plane but with substituted equation
+
+    //(x-c)^2 - r^2 = 0 c = center r = radius
+    //(p+td-c)^2 - r^2 = 0
+    //(t^2d^2) + 2td * (p-c) + (p-c)^2 - r^2 = 0
+    //A = d^2 ----- B = 2d * (p-c) ----- C = (p-c)^2-r^2
+
+    //equation to solve for A B and C
+    glm::vec3 difference = origin - center;
+    float A = glm::dot(direction, direction);
+    float B = 2 * glm::dot(direction, difference);
+    float C = glm::dot(difference, difference) - (radius * radius);
+
+    //use discriminant and see if greater than 0, if so, collision
+    float collision = ((B * B) - (4 * A * C));
+
+    if(collision < 0)
+    {
+      return {0.0, 0.0, 0.0};
+    }
+    else{
+      //t value is minimum solution to the quadratic formula
+      float min_t = min((-B + sqrt(collision))/(2*A), (-B - sqrt(collision))/(2*A));
+      //finding collision point with nearest value of t (min)
+      glm::vec3 x = origin + (min_t * direction);
+      glm::vec3 normal = (x-center)/radius;
+
+      return x;
+      //run ADS coloring to figure out color based on collision point normal and location
+      //color(normal, ray)
+    }
 }

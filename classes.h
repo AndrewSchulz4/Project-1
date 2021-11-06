@@ -1,5 +1,6 @@
-//#include "GLInclude.h"
-
+#include "GLInclude.h"
+#ifndef _CLASSES_H
+#define _CLASSES_H
 class Light {
   public:
   Light() {};
@@ -87,3 +88,15 @@ private:
   glm::vec4 I_s = {};
 };
 
+class Sphere {
+  public:
+  Sphere() {};
+  Sphere(float radius, glm::vec3 position) : radius(radius), center(position) {}
+  float getRadius() { return radius; }
+  glm::vec3 getCenter() { return center; }
+
+  private:
+  float radius;
+  glm::vec3 center;
+};
+#endif

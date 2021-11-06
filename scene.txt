@@ -4,4 +4,4 @@ Camera camera_position 0.0 0.0 0.0
 Camera camera_viewDirection 0.0 0.0 -1.0
 Camera camera_up 0.0 1.0 0.0
 Camera camera_right 1.0 0.0 0.0
-Light light_position 0.0 5.0 0.0
+Light light_position 0.0 20.0 -15.0
