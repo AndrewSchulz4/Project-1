@@ -13,12 +13,12 @@ std::ostream& operator<<(ostream& os, const glm::vec3 v) {
 //think all I need are given ray and plane as inputs
 //plane will be determined by what Darin brings as an input
 //can return bool, may want to return value of x which would be a glm::vec3?
-bool collision(Ray ray, Plane ground_plane)
+glm::vec3 collision(Ray ray, Plane ground_plane)
 {
     float t;
     //vector for collision point (collision location)
     //not vec3, will change later
-    glm::vec3 x;
+    glm::vec3 x = {0.0, 0.0, 0.0};
 
     //solve for n /*dot product*/ d as it will be used twice (efficiency)
     float n_dot_d = glm::dot(ray.getDirection(), ground_plane.getN());
@@ -45,7 +45,7 @@ bool collision(Ray ray, Plane ground_plane)
     {
         //plug t into ray equation to find collision point x (will have normal n)
         x = ray.getOrigin() + (t * ray.getDirection());
-        return true;
+        return x;
     }
-    return false;
+    return x;
 }

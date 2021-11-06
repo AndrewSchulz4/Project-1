@@ -24,6 +24,7 @@
 // Global variables - avoid these
 Plane mainPlane;
 Camera mainCamera;
+Light mainLight;
 // Window
 int g_width{1360};
 int g_height{768};
@@ -41,34 +42,126 @@ float g_framesPerSecond{0.f};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
-void sceneInput(Plane& plane, Camera& camera) {
+void materialInput(Plane& plane) {
+      ifstream input;
+      input.open("planecolor.txt");
+      glm::vec4 plane_k_a;
+      glm::vec4 plane_k_d;
+      glm::vec4 plane_k_s;
+      glm::vec4 plane_I_a;
+      glm::vec4 plane_I_d;
+      glm::vec4 plane_I_s;
+      GLfloat val1;
+      GLfloat val2;
+      GLfloat val3;
+      GLfloat val4;
+      std::string category;
+      std::string type;
+      while(input >> category >> type >> val1 >> val2 >> val3 >> val4) {
+        if (category == "Plane") {
+          if (type == "k_a") {
+            plane_k_a = {val1, val2, val3, val4};
+          }
+          if (type == "k_d") {
+            plane_k_d = {val1, val2, val3, val4};
+          }
+          if (type == "k_s") {
+            plane_k_s = {val1, val2, val3, val4};
+          }
+          if (type == "I_a") {
+            plane_I_a = {val1, val2, val3, val4};
+          }
+          if (type == "I_d") {
+            plane_I_d = {val1, val2, val3, val4};
+          }
+          if (type == "I_s") {
+            plane_I_s = {val1, val2, val3, val4};
+          }
+        }
+      }   
+      plane.storeMaterials(plane_k_a, plane_k_d, plane_k_s, plane_I_a, plane_I_d, plane_I_s);
+}
+void sceneInput(Plane& plane, Camera& camera, Light& light) {
   std::ifstream input;
+  std::string category;
   std::string type;
   GLfloat val1;
   GLfloat val2;
   GLfloat val3;
-  int counter;
+
+
+  glm::vec3 planeNorm;
+  glm::vec3 planePoint;
+  glm::vec3 camPosition;
+  glm::vec3 camViewDirection;
+  glm::vec3 camUp;
+  glm::vec3 camRight;
+  glm::vec3 lightPosition;
+  
   input.open("scene.txt");
-  while(input >> type >> val1 >> val2 >> val3) {
-    if (type == "plane_normal") {
-      plane.setNorm({val1, val2, val3});
+  while(input >> category >> type >> val1 >> val2 >> val3) {
+
+    if (category == "Plane") {
+      if (type == "plane_normal"){
+        planeNorm = {val1, val2, val3};
+      }
+      if (type == "plane_point") {
+        planePoint = {val1, val2, val3};
+      }
     }
-    if (type == "plane_point") {
-      plane.setP({val1, val2, val3});
+    else if (category == "Camera") {
+      if (type == "camera_position") {
+        camPosition = {val1, val2, val3};
+      }
+      if (type == "camera_viewDirection") {
+        camViewDirection = {val1, val2, val3};
+      }
+      if (type == "camera_up") {
+        camUp = {val1, val2, val3};
+      }
+      if (type == "camera_right") {
+        camRight = {val1, val2, val3};
+      }
     }
-    if (type == "camera_position") {
-      camera.setPosition({val1, val2, val3});
+    else if (category == "Light") {
+      if (type == "light_position") {
+        lightPosition = {val1, val2, val3};
+      }
     }
-    if (type == "camera_viewDirection"){
-      camera.setViewDirection({val1, val2, val3});
-    }
-    if (type == "camera_up") {
-      camera.setUpVector({val1, val2, val3});
-    }
-    if (type == "camera_right") {
-      camera.setAtVector({val1, val2, val3});
-    }
+    plane = Plane(planeNorm, planePoint);
+    camera = Camera(camPosition, camViewDirection, camUp, camRight);
+    light = Light(lightPosition);
   }
+}
+
+  glm::vec4 colorPlane(glm::vec3 point, Plane p, Camera c, Light l) {
+
+    GLfloat constantAttenuation = 0.5f;
+    GLfloat linearAttenuation = 0.1f;
+    GLfloat quadraticAttenuation = 0.05f;
+    GLfloat rho = 0.5f;
+
+    // glm::vec4 k_a = {0.9f, 0.4f, 0.2f, 1.0f};
+    // glm::vec4 I_a = {0.3f, 0.3f, 0.3f, 1.0f};
+    // glm::vec4 k_d = k_a;
+    // glm::vec4 I_d = {0.8f, 0.8f, 0.8f, 0.0f};
+    // glm::vec4 k_s = {0.7f, 0.7f, 0.7f, 0.5f};
+    // glm::vec4 I_s = I_d;
+    //glm::vec3 lightPos = {0.0f, 5.0f, 0.0f};
+    
+
+    GLfloat dist = distance(point, l.getPosition());    
+
+    GLfloat totalAttenuation = 1 / (constantAttenuation + linearAttenuation * dist + quadraticAttenuation * pow(dist, 2));
+    Ray toLight(point, l.getPosition());
+    Ray toCamera(point, c.getPosition());
+    Ray reflectedRay(p.getP(), reflect(toLight.getDirection(), p.getN()));
+    glm::vec3 color3 = ((p.get_k_a() * p.get_I_a() + (totalAttenuation * p.get_k_d() * p.get_I_d() * max(0.0f, dot(toLight.getDirection(), p.getN()))) + (totalAttenuation * p.get_k_s() * p.get_I_s() * pow(max(0.0f, dot(reflectedRay.getDirection(), toCamera.getDirection())), rho))));
+
+    glm::vec4 color4 = {color3[0], color3[1], color3[2], 1.0f};
+    return color4;
+  }
+
   //UNCOMMENT FOR DEBUGGING
   //   std::cout << "plane_norm: " << plane.getN()[0] << " " << plane.getN()[1] << " " << plane.getN()[2] << std::endl;
   //   std::cout << "plane_point: " << plane.getP()[0] << " " << plane.getP()[1] << " " << plane.getP()[2] << std::endl;
@@ -79,15 +172,15 @@ void sceneInput(Plane& plane, Camera& camera) {
   // std::cout << "up: " << camera.getUpVector()[0] << " " << camera.getUpVector()[1] << " " << camera.getUpVector()[2] << std::endl;
 
   // std::cout << "right: " << camera.getRightVector()[0] << " " << camera.getRightVector()[1] << " " << camera.getRightVector()[2] << std::endl;
-}
+
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Initialize GL settings
 void
 initialize(GLFWwindow* _window) {
   glClearColor(0.f, 0.f, 0.f, 1.f);
 
-  sceneInput(mainPlane, mainCamera);
-  
+  sceneInput(mainPlane, mainCamera, mainLight);
+  materialInput(mainPlane);
 
   //Plane plane;
   //sceneInput(plane);
@@ -128,13 +221,14 @@ draw(GLFWwindow* _window, double _currentTime) {
 //  for(int i = 0; i < g_width*g_height; i++)
 //    g_frame[i] = glm::vec4(float(rand())/RAND_MAX, float(rand())/RAND_MAX, float(rand())/RAND_MAX, 1.f);
 
-
+  glm::vec3 zero = {0.0, 0.0, 0.0};
+  std::cout << mainPlane.get_k_a()[0] << " " << mainPlane.get_k_a()[1] << " " << mainPlane.get_k_a()[2] << " " << mainPlane.get_k_a()[3] << std::endl;
    for(int row = 0;  row < g_height; row++){
      for (int col = 0; col < g_width; col++){
         Ray mainRay = raygen(mainCamera, mainCamera.getPosition(), row, col, g_width, g_height);
-        bool hitPlane = collision(mainRay, mainPlane);
-        if (hitPlane){
-        g_frame[(row*g_width)+col] = glm::vec4(255.0f,255.0f,255.0f, 1.f);
+        glm::vec3 hitPlane = collision(mainRay, mainPlane);
+        if (hitPlane != zero){
+        g_frame[(row*g_width)+col] = colorPlane(hitPlane, mainPlane, mainCamera, mainLight);
         }
      }      
    }
