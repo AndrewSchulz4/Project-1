@@ -42,19 +42,6 @@ class Ray {
 
 class Plane {
 public:
-  // void init() {
-  //     normal = {normalx, normaly, normalz};
-  //     p = {px, py, pz};
-  // }
-  // void planeMaker() {
-  // std::ifstream sceneInput;
-  // sceneInput.open("scene.txt");    
-  // while(sceneInput)
-  //   sceneInput >> normalx >> normaly >> normalz >> px >> py >> pz;
-  //   std::cout << "normal: " << "{" << normalx << "," << normaly << "," <<normalz << "point: " << px << "," << py << "," << pz << std::endl;
-  // init();
-  //return plane;
-//}
   Plane() {};
   glm::vec3 getN() {return normal; }
   glm::vec3 getP() {return p; }
@@ -91,12 +78,25 @@ private:
 class Sphere {
   public:
   Sphere() {};
-  Sphere(float radius, glm::vec3 position) : radius(radius), center(position) {}
+  Sphere(float radius, glm::vec3 center) : radius(radius), center(center) {}
   float getRadius() { return radius; }
   glm::vec3 getCenter() { return center; }
+  glm::vec4 get_k_a() {return k_a;}
+  glm::vec4 get_k_d() {return k_d;}
+  glm::vec4 get_k_s() {return k_s;}
+  glm::vec4 get_I_a() {return I_a;}
+  glm::vec4 get_I_d() {return I_d;}
+  glm::vec4 get_I_s() {return I_s;}
+  void changeCenter(glm::vec3 newCenter) { center = newCenter; }
 
   private:
   float radius;
   glm::vec3 center;
+  glm::vec4 k_a = {1.0f, 0.0f, 0.0f, 1.0f};
+  glm::vec4 I_a = {0.3f, 0.3f, 0.3f, 1.0f};
+  glm::vec4 k_d = k_a;
+  glm::vec4 I_d = {0.8f, 0.8f, 0.8f, 0.0f};
+  glm::vec4 k_s = {0.7f, 0.7f, 0.7f, 0.5f};
+  glm::vec4 I_s = {0.8f, 0.8f, 0.8f, 0.0f};
 };
 #endif

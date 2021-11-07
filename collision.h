@@ -89,7 +89,7 @@ glm::vec3 collision_sphere(Ray& ray, Sphere& sphere)
       float min_t = min((-B + sqrt(collision))/(2*A), (-B - sqrt(collision))/(2*A));
       //finding collision point with nearest value of t (min)
       glm::vec3 x = origin + (min_t * direction);
-      glm::vec3 normal = (x-center)/radius;
+      //glm::vec3 normal = (x-center)/radius;
 
       return x;
       //run ADS coloring to figure out color based on collision point normal and location

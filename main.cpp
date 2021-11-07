@@ -20,6 +20,7 @@
 #include "collision.h"
 #include "RayGen.h"
 #include "input.h"
+#include "coloring.h"
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these
 Plane mainPlane;
@@ -43,34 +44,6 @@ float g_framesPerSecond{0.f};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
-
-  glm::vec4 colorPlane(glm::vec3 point, Plane p, Camera c, Light l) {
-
-    GLfloat constantAttenuation = 0.5f;
-    GLfloat linearAttenuation = 0.1f;
-    GLfloat quadraticAttenuation = 0.05f;
-    GLfloat rho = 0.5f;
-
-    // glm::vec4 k_a = {0.9f, 0.4f, 0.2f, 1.0f};
-    // glm::vec4 I_a = {0.3f, 0.3f, 0.3f, 1.0f};
-    // glm::vec4 k_d = k_a;
-    // glm::vec4 I_d = {0.8f, 0.8f, 0.8f, 0.0f};
-    // glm::vec4 k_s = {0.7f, 0.7f, 0.7f, 0.5f};
-    // glm::vec4 I_s = I_d;
-    //glm::vec3 lightPos = {0.0f, 5.0f, 0.0f};
-    
-
-    GLfloat dist = distance(point, l.getPosition());    
-
-    GLfloat totalAttenuation = 1 / (constantAttenuation + linearAttenuation * dist + quadraticAttenuation * pow(dist, 2));
-    Ray toLight(point, l.getPosition());
-    Ray toCamera(point, c.getPosition());
-    Ray reflectedRay(p.getP(), reflect(toLight.getDirection(), p.getN()));
-    glm::vec3 color3 = ((p.get_k_a() * p.get_I_a() + (totalAttenuation * p.get_k_d() * p.get_I_d() * max(0.0f, dot(toLight.getDirection(), p.getN()))) + (totalAttenuation * p.get_k_s() * p.get_I_s() * pow(max(0.0f, dot(reflectedRay.getDirection(), toCamera.getDirection())), rho))));
-
-    glm::vec4 color4 = {color3[0], color3[1], color3[2], 1.0f};
-    return color4;
-  }
 
   //UNCOMMENT FOR DEBUGGING
   //   std::cout << "plane_norm: " << plane.getN()[0] << " " << plane.getN()[1] << " " << plane.getN()[2] << std::endl;
@@ -143,7 +116,6 @@ draw(GLFWwindow* _window, double _currentTime) {
           Ray shadowRayPlane(hitPlane, mainLight.getPosition());
           if (collision_sphere(shadowRayPlane, sphere1) != zero){
             g_frame[(row*g_width) + col] = glm::vec4(0.23f, 0.22f, 0.23f, 1.0f);
-
           }
           else {
             g_frame[(row*g_width)+col] = colorPlane(hitPlane, mainPlane, mainCamera, mainLight);
@@ -155,12 +127,7 @@ draw(GLFWwindow* _window, double _currentTime) {
         if (hitSphere != zero){
           Ray shadowRaySphere(hitSphere, mainLight.getPosition());
           if(collision_sphere(shadowRaySphere, sphere1) != zero) {
-            g_frame[(row*g_width)+col] = glm::vec4(0.31f,0.09f,0.41f, 1.f);
-
-          }
-          else {
-            g_frame[(row*g_width) + col] = glm::vec4(0.23f, 0.22f, 0.23f, 1.0f);
-
+            g_frame[(row*g_width) + col] = colorSphere(hitSphere, sphere1, mainCamera, mainLight);
           }
         }
      }      
@@ -221,8 +188,29 @@ keyCallback(GLFWwindow* _window, int _key, int _scancode,
         break;
         // Arrow keys
       case GLFW_KEY_LEFT:
-      case GLFW_KEY_RIGHT:
+      {
+        glm::vec3 newcent = {sphere1.getCenter()[0] + 1, sphere1.getCenter()[1], sphere1.getCenter()[2]};
+        sphere1.changeCenter(newcent);
         break;
+      }
+      case GLFW_KEY_RIGHT:
+      {
+        glm::vec3 newcent = {sphere1.getCenter()[0] - 1, sphere1.getCenter()[1], sphere1.getCenter()[2]};
+        sphere1.changeCenter(newcent);
+        break;
+      }
+      case GLFW_KEY_UP:
+      {
+        glm::vec3 newcent = {sphere1.getCenter()[0], sphere1.getCenter()[1], sphere1.getCenter()[2] - 1};
+        sphere1.changeCenter(newcent);
+        break;
+      }
+      case GLFW_KEY_DOWN:
+      {
+        glm::vec3 newcent = {sphere1.getCenter()[0], sphere1.getCenter()[1], sphere1.getCenter()[2] + 1};
+        sphere1.changeCenter(newcent);
+        break;
+      }
         // Unhandled
       default:
         std::cout << "Unhandled key: " << _key << std::endl;
