@@ -18,7 +18,7 @@
 #include "GLInclude.h"
 #include "classes.h"
 #include "collision.h"
-#include "RayGen.h"
+#include "properraygen.h"
 #include "input.h"
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these

@@ -20,7 +20,6 @@ Ray raygen (Camera& cam, glm::vec3 cameraPos, int row, int col, int max_wid, int
             }
 
             
-
             
             float newHeight = max_height / 2;
             float upwaysRatio = 0;

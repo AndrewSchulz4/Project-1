@@ -67,6 +67,8 @@ void sceneInput(Plane& plane, Camera& camera, Light& light) {
   glm::vec3 camUp;
   glm::vec3 camRight;
   glm::vec3 lightPosition;
+
+  float l,r,b,t,d;
   
   input.open("scene.txt");
   while(input >> category >> type >> val1 >> val2 >> val3) {
@@ -92,6 +94,19 @@ void sceneInput(Plane& plane, Camera& camera, Light& light) {
       if (type == "camera_right") {
         camRight = {val1, val2, val3};
       }
+      if (type == "camera_LR") {
+        l = val1;
+        r = val2;
+      }
+      if (type == "camera_TB"){
+        t = val1;
+        b = val2;
+      }
+      if (type == "camera_D")
+      {
+      d = val1;
+      }
+  
     }
     else if (category == "Light") {
       if (type == "light_position") {
@@ -99,7 +114,7 @@ void sceneInput(Plane& plane, Camera& camera, Light& light) {
       }
     }
     plane = Plane(planeNorm, planePoint);
-    camera = Camera(camPosition, camViewDirection, camUp, camRight);
+    camera = Camera(camPosition, camViewDirection, camUp, camRight, l, r, b, t, d);
     light = Light(lightPosition);
   }
 }
