@@ -24,7 +24,8 @@ Ray raygen (Camera& cam, glm::vec3 cameraPos, int i, int j, int max_wid, int max
     u_ray = u_ray * theta;
     v_ray = v_ray * sigma;
 
-    glm::vec3 dir_ray = {w_ray.x + u_ray.x + v_ray.x, w_ray.y + u_ray.y + v_ray.y, w_ray.z + u_ray.z + v_ray.z};
+    glm::vec3 dir_ray = w_ray + u_ray + v_ray;
+
 
 
         Ray newRay (cameraPos, dir_ray);
