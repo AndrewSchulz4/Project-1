@@ -48,7 +48,7 @@ void materialAndSphereInput(Plane& plane, Sphere& s) {
           }
         }
       }   
-      plane.storeMaterials(plane_k_a, plane_k_d, plane_k_s, plane_I_a, plane_I_d, plane_I_s);
+      //plane.storeMaterials(plane_k_a, plane_k_d, plane_k_s, plane_I_a, plane_I_d, plane_I_s);
       s = Sphere(radius, spherePos);
 }
 void sceneInput(Plane& plane, Camera& camera, Light& light) {

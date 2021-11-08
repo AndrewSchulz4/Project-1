@@ -105,29 +105,31 @@ draw(GLFWwindow* _window, double _currentTime) {
 //    g_frame[i] = glm::vec4(float(rand())/RAND_MAX, float(rand())/RAND_MAX, float(rand())/RAND_MAX, 1.f);
 
   glm::vec3 zero = {0.0, 0.0, 0.0};
-  std::cout << mainPlane.get_k_a()[0] << " " << mainPlane.get_k_a()[1] << " " << mainPlane.get_k_a()[2] << " " << mainPlane.get_k_a()[3] << std::endl;
+  //std::cout << mainPlane.get_k_a()[0] << " " << mainPlane.get_k_a()[1] << " " << mainPlane.get_k_a()[2] << " " << mainPlane.get_k_a()[3] << std::endl;
    for(int row = 0;  row < g_height; row++){
      for (int col = 0; col < g_width; col++){
         Ray mainRay = raygen(mainCamera, mainCamera.getPosition(), row, col, g_width, g_height);
 
-        glm::vec3 hitPlane = collision(mainRay, mainPlane);
-        glm::vec3 hitSphere = collision_sphere(mainRay, sphere1);
-        if (hitPlane != zero){
-          Ray shadowRayPlane(hitPlane, mainLight.getPosition());
-          if (collision_sphere(shadowRayPlane, sphere1) != zero){
+        Collisionpoint hitPlane = collision(mainRay, mainPlane);
+        Collisionpoint hitSphere = collision_sphere(mainRay, sphere1);
+        if (hitPlane.getPosition() != zero){
+          Ray shadowRayPlane(hitPlane.getPosition(), mainLight.getPosition());
+          Collisionpoint intersect = collision_sphere(shadowRayPlane, sphere1);
+          if (intersect.getPosition() != zero){
             g_frame[(row*g_width) + col] = glm::vec4(0.23f, 0.22f, 0.23f, 1.0f);
           }
           else {
-            g_frame[(row*g_width)+col] = colorPlane(hitPlane, mainPlane, mainCamera, mainLight);
+            g_frame[(row*g_width)+col] = color(hitPlane, mainCamera, mainLight);
 
           }
         }
         //plane rendering as color white
         // sphere should render as color red
-        if (hitSphere != zero){
-          Ray shadowRaySphere(hitSphere, mainLight.getPosition());
-          if(collision_sphere(shadowRaySphere, sphere1) != zero) {
-            g_frame[(row*g_width) + col] = colorSphere(hitSphere, sphere1, mainCamera, mainLight);
+        if (hitSphere.getPosition() != zero){
+          Ray shadowRaySphere(hitSphere.getPosition(), mainLight.getPosition());
+          Collisionpoint intersect = collision_sphere(shadowRaySphere, sphere1);
+          if(intersect.getPosition() != zero) {
+            g_frame[(row*g_width) + col] = color(hitSphere, mainCamera, mainLight);
           }
         }
      }      
