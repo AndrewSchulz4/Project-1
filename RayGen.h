@@ -1,49 +1,35 @@
 //This function to be called from a for loop in main
-Ray raygen (Camera& cam, glm::vec3 cameraPos, int row, int col, int max_wid, int max_height) {
+Ray raygen (Camera& cam, glm::vec3 cameraPos, int i, int j, int max_wid, int max_height) {
             // glm::vec3 viewDirection = {0, 0, -1}; //Temp for now
             // glm::vec3 up = {0,1,0};
             // glm::vec3 right = {1,0,0};
-            float FOV = glm::pi<float>()/4; //FOV is double this number, FOV at 90 degrees rn, (pi/4 = 45)
+    //float FOV = glm::pi<float>()/4; //FOV is double this number, FOV at 90 degrees rn, (pi/4 = 45)
+
+    float r,l,t,b,d;
+    d = cam.getD();
+    r = cam.getR();
+    l = cam.getL(); 
+    t = cam.getT();
+    b = cam.getB();
+   // std::cout << "LRBTD" << l << " , " << r << " , " << b << " , " << t << " , " << d << " , " << std::endl;
+
+    float theta = l + ((r-l)/(float)max_wid) * ((float)i+0.5); //Sigma Theta need to be switched for some reason? 
+    float sigma = b + ((t-b)/(float)max_height) * ((float)j+0.5);
+
+    glm::vec3 w_ray(0,0,1);
+    glm::vec3 u_ray(0,1,0);
+    glm::vec3 v_ray(1,0,0);
+
+    w_ray = w_ray * d * -1;
+    u_ray = u_ray * theta;
+    v_ray = v_ray * sigma;
+
+    glm::vec3 dir_ray = w_ray + u_ray + v_ray;
 
 
-            //Here we are trying to get an angle to rotate the vector 
-            //We use the FOV and pixels row/col to find how much to rotate by
 
-            float newWid = max_wid / 2;
-            float sidewaysRatio = 0;
-            if (col < newWid) { //Trying to get a ratio from 0-1 where 0 represents centerline and 1 the boundary
-                sidewaysRatio = (col / newWid) - 1;
-                sidewaysRatio = FOV * sidewaysRatio;
-            } else {
-                sidewaysRatio = (col / newWid) - 1; 
-                sidewaysRatio = FOV * sidewaysRatio;
-            }
+        Ray newRay (cameraPos, dir_ray);
 
-            
 
-            
-            float newHeight = max_height / 2;
-            float upwaysRatio = 0;
-            if (col < newWid) {
-                upwaysRatio = (row / newHeight) - 1;
-                upwaysRatio = FOV * upwaysRatio;
-            } else {
-                upwaysRatio = (row / newHeight) - 1; 
-                upwaysRatio = FOV * upwaysRatio;
-            }
-
-            //uncomment these for testing 
-            //std::cout << "oldView: " << viewDirection.x << "," << viewDirection.y << "," << viewDirection.z << std::endl;
-
-            // viewDirection =  glm::rotate(viewDirection, sidewaysRatio, up);
-            // viewDirection =  glm::rotate(viewDirection, upwaysRatio, right);
-            cam.setViewDirection(glm::rotate(cam.getViewDirection(), sidewaysRatio, cam.getUpVector()));
-            cam.setViewDirection(glm::rotate(cam.getViewDirection(), upwaysRatio, cam.getRightVector()));
-
-            //Ray newRay(cameraPos, viewDirection); //gives us a parrellel ray pointing in view direction
-            Ray newRay (cameraPos, cam.getViewDirection());
-            cam.setViewDirection({0.0, 0.0, -1.0});
-            //std::cout << "newView: " << viewDirection.x << "," << viewDirection.y << "," << viewDirection.z<< std::endl;
-            //std::cout << "cameraPos: " << cameraPos.x << "," << cameraPos.y << "," << cameraPos.z << std::endl;
-            return newRay;
+    return newRay;
 }
