@@ -17,18 +17,26 @@ class Camera {
   glm::vec3 getViewDirection() { return viewDirection;}
   glm::vec3 getUpVector() { return up; }
   glm::vec3 getRightVector() { return right; }
+  float getR() { return r;}
+  float getL() { return l;}
+  float getT() { return t;}
+  float getB() { return b;}
+  float getD() { return d;}
+
   void setPosition(glm::vec3 pos) {position = pos;}
   void setViewDirection(glm::vec3 w) { viewDirection = w; }
   void setUpVector(glm::vec3 u) {up = u;}
   void setAtVector(glm::vec3 r) {right = r;}
 
-  Camera(glm::vec3 position, glm::vec3 viewDirection, glm::vec3 up, glm::vec3 right) : position(position), viewDirection(viewDirection), up(up), right(right) {}
+  Camera(glm::vec3 position, glm::vec3 viewDirection, glm::vec3 up, glm::vec3 right, float l, float r, float b, float t, float d) : position(position), viewDirection(viewDirection), up(up), right(right), l(l), r(r), b(b), t(t), d(d) {}
   private:
+    float r,l,t,b,d; //Right Left Top Bottom for Camera, d for Distance ie focal length
   glm::vec3 position;
   glm::vec3 viewDirection;
   glm::vec3 up;
   glm::vec3 right;
 };
+
 class Ray {
     public:
     glm::vec3 getOrigin() { return origin; }
