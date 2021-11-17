@@ -80,7 +80,7 @@ Collisionpoint collision_sphere(Ray& ray, Sphere& sphere)
 
     //use discriminant and see if greater than 0, if so, collision
     float collision = ((B * B) - (4 * A * C));
-
+    
     if(collision < 0)
     {
       glm::vec3 zero = {0.0, 0.0, 0.0};
@@ -98,8 +98,11 @@ Collisionpoint collision_sphere(Ray& ray, Sphere& sphere)
       {
         min_t = tval1;
       }
-      else
+      else if(tval1 > tval2 && tval2 > 0)
+      {
         min_t = tval2;
+      }
+
       
       //finding collision point with nearest value of t (min)
       glm::vec3 x = origin + (min_t * direction);
@@ -110,7 +113,3 @@ Collisionpoint collision_sphere(Ray& ray, Sphere& sphere)
       //color(normal, ray)
     }
 }
-
-//coloring sphere with normals
-//v color vector
-//color = (1+v)/2

@@ -111,7 +111,7 @@ draw(GLFWwindow* _window, double _currentTime) {
         Ray mainRay = raygen(mainCamera, mainCamera.getPosition(), row, col, g_width, g_height);
 
         Collisionpoint hitPlane = collision(mainRay, mainPlane);
-        Collisionpoint hitSphere = collision_sphere(mainRay, sphere1);
+        Collisionpoint hitSphere = collision_sphere(mainRay, sphere1);       
         if (hitPlane.getPosition() != zero){
           Ray shadowRayPlane(hitPlane.getPosition(), mainLight.getPosition());
           Collisionpoint intersect = collision_sphere(shadowRayPlane, sphere1);
@@ -129,6 +129,13 @@ draw(GLFWwindow* _window, double _currentTime) {
           Ray shadowRaySphere(hitSphere.getPosition(), mainLight.getPosition());
           Collisionpoint intersect = collision_sphere(shadowRaySphere, sphere1);
           if(intersect.getPosition() != zero) {
+            //coloring sphere with normals
+            //v color vector
+            //color = (1+v)/2
+            // glm::vec3 normals = intersect.getNormal();
+            // glm::vec4 normalc = {normals[0] + 1, normals[1] + 1, normals[2] + 1, 1};
+            // normalc = normalc/2;
+            // g_frame[(row*g_width) + col] = normalc;
             g_frame[(row*g_width) + col] = color(hitSphere, mainCamera, mainLight);
           }
         }
@@ -191,13 +198,13 @@ keyCallback(GLFWwindow* _window, int _key, int _scancode,
         // Arrow keys
       case GLFW_KEY_LEFT:
       {
-        glm::vec3 newcent = {sphere1.getCenter()[0] + 1, sphere1.getCenter()[1], sphere1.getCenter()[2]};
+        glm::vec3 newcent = {sphere1.getCenter()[0] - 1, sphere1.getCenter()[1], sphere1.getCenter()[2]};
         sphere1.changeCenter(newcent);
         break;
       }
       case GLFW_KEY_RIGHT:
       {
-        glm::vec3 newcent = {sphere1.getCenter()[0] - 1, sphere1.getCenter()[1], sphere1.getCenter()[2]};
+        glm::vec3 newcent = {sphere1.getCenter()[0] + 1, sphere1.getCenter()[1], sphere1.getCenter()[2]};
         sphere1.changeCenter(newcent);
         break;
       }
