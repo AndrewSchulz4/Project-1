@@ -3,7 +3,7 @@
     GLfloat constantAttenuation = 0.5f;
     GLfloat linearAttenuation = 0.1f;
     GLfloat quadraticAttenuation = 0.05f;
-    GLfloat rho = 0.0f; //causes sphere weird shading when above 0
+    GLfloat rho = 0.3f; //causes sphere weird shading when above 0
 
     GLfloat dist = distance(point.getPosition(), l.getPosition());    
 
