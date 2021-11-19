@@ -16,6 +16,7 @@
 #include <iomanip>
 // Engine
 #include "GLInclude.h"
+#include "CompileShaders.h"
 #include "classes.h"
 #include "collision.h"
 #include "RayGen.h"
@@ -27,12 +28,30 @@ Plane mainPlane;
 Camera mainCamera;
 Light mainLight;
 Sphere sphere1;
+
+struct Vertex {
+  glm::vec4 pos;
+  glm::vec4 col;
+  Vertex(const glm::vec4& _pos, const glm::vec4& _col) : pos{_pos}, col{_col} {}
+};
+//Rendering System
+enum class Renderer {RayTracer, Rasterizer};
+constexpr Renderer g_renderer = Renderer::Rasterizer;
+
 // Window
 int g_width{1360};
 int g_height{768};
 
-// Framebuffer
+
+//RayTracer
+GLuint g_texture;
+GLuint g_framebuffer;
 std::unique_ptr<glm::vec4[]> g_frame{nullptr}; ///< Framebuffer
+
+//Rasterizer
+GLuint g_program{0};
+GLuint g_vao{0};
+GLuint g_vbo{0};
 
 // Frame rate
 const unsigned int FPS = 60;
@@ -61,15 +80,46 @@ float g_framesPerSecond{0.f};
 void
 initialize(GLFWwindow* _window) {
   glClearColor(0.f, 0.f, 0.f, 1.f);
+  switch(g_renderer) {
+    case Renderer::RayTracer: {
+      sceneInput(mainPlane, mainCamera, mainLight);
+      materialAndSphereInput(mainPlane, sphere1);
+      glGenTextures(1, &g_texture);
+      glGenFramebuffers(1, &g_framebuffer);
+      g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
+      break;
+    }
+    case Renderer::Rasterizer: {
+      glEnable(GL_DEPTH_TEST);
+      g_program = compileProgram("passthrough.vert", "passthrough.frag");
+      glUseProgram(g_program);
+      static Vertex vertices[] = {
+        Vertex(glm::vec4{-1.f, -1.f, 0, 1}, glm::vec4{1.f, 0.f, 0.f, 1.f}),
+        Vertex(glm::vec4{1.f, 0.f, 0, 1}, glm::vec4{0.f, 1.f, 0.f ,1.f}),
+        Vertex(glm::vec4{0.f, 1.f, 0, 1}, glm::vec4{0.f, 0.f, 1.f, 1.f})
+      };
+      //Generate Vertex array
+      glGenVertexArrays(1, &g_vao);
+      glBindVertexArray(g_vao);
 
-  sceneInput(mainPlane, mainCamera, mainLight);
-  materialAndSphereInput(mainPlane, sphere1);
+      //Generate / specify vertex buffer
+      glGenBuffers(1, &g_vbo);
+      glBindBuffer(GL_ARRAY_BUFFER, g_vbo);
+      glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 3, vertices, GL_STATIC_DRAW);
 
+      glEnableVertexAttribArray(0);
+      glVertexAttribPointer(0,4,GL_FLOAT,GL_FALSE,sizeof(Vertex), (char*)NULL + 0);
+
+      glEnableVertexAttribArray(1);
+      glVertexAttribPointer(1,4,GL_FLOAT, GL_FALSE, sizeof(Vertex), (char*)NULL + sizeof(glm::vec4));
+      glBindBuffer(GL_ARRAY_BUFFER, 0);
+      glBindVertexArray(0);
+      break;
+    }
+  }
   //Plane plane;
   //sceneInput(plane);
   //std::cout << plane.normalx << " " << plane.normaly << " " << plane.normalz;
-
-  g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,6 +127,9 @@ initialize(GLFWwindow* _window) {
 ///
 /// Responsible for setting window size (viewport) and projection matrix.
 void resize(GLFWwindow* window, int _w, int _h) {
+  if(g_renderer == Renderer::RayTracer && g_width*g_height >= _w*_h) {
+    g_frame = std::make_unique<glm::vec4[]>(_w*_h);
+  }
   g_width = _w;
   g_height = _h;
 
@@ -91,7 +144,13 @@ void
 draw(GLFWwindow* _window, double _currentTime) {
   //////////////////////////////////////////////////////////////////////////////
   // Clear
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+if(g_renderer == Renderer::RayTracer) {
+  for(int i = 0; i< g_width*g_height; i++) {
+    g_frame[i] = glm::vec4(0.f, 0.4f, 0.f, 0.f);
+  }
+}
+
 
   for(int i = 0; i < g_width*g_height; ++i)   
     g_frame[i] = glm::vec4(0.f, 0.0f, 0.f, 0.f);
@@ -103,7 +162,9 @@ draw(GLFWwindow* _window, double _currentTime) {
 
 //  for(int i = 0; i < g_width*g_height; i++)
 //    g_frame[i] = glm::vec4(float(rand())/RAND_MAX, float(rand())/RAND_MAX, float(rand())/RAND_MAX, 1.f);
+switch(g_renderer) {
 
+case Renderer::RayTracer: {
   glm::vec3 zero = {0.0, 0.0, 0.0};
   //std::cout << mainPlane.get_k_a()[0] << " " << mainPlane.get_k_a()[1] << " " << mainPlane.get_k_a()[2] << " " << mainPlane.get_k_a()[3] << std::endl;
    for(int row = 0;  row < g_height; row++){
@@ -141,6 +202,22 @@ draw(GLFWwindow* _window, double _currentTime) {
         }
      }      
    }
+   glBindTexture(GL_TEXTURE_2D, g_texture);
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, g_width, g_height, 0, GL_RGBA, GL_FLOAT, g_frame.get());
+   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, g_framebuffer);
+   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+   glBlitFramebuffer(0, 0, g_width, g_height, 0, 0, g_width, g_height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+   glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+   glBindTexture(GL_TEXTURE_2D, 0);
+   break;
+}
+case Renderer::Rasterizer: {
+  glBindVertexArray(g_vao);
+  glDrawArrays(GL_TRIANGLES,0,3);
+  glBindVertexArray(0);
+  break;
+}
+}
 
   glDrawPixels(g_width, g_height, GL_RGBA, GL_FLOAT, g_frame.get());
 }
@@ -227,7 +304,24 @@ keyCallback(GLFWwindow* _window, int _key, int _scancode,
     }
   }
 }
+void windowCloseCallback(GLFWwindow* _window) {
+  switch(g_renderer) {
+    case Renderer::RayTracer: {
+      glDeleteTextures(1, &g_texture);
+      glDeleteFramebuffers(1, &g_framebuffer);
+      break;
+    }
+    case Renderer::Rasterizer: {
+      glDeleteBuffers(1, &g_vbo);
+      glDeleteVertexArrays(1, &g_vao);
+      break;
+    }
+  }
+}
 
+void errorCallback(int _code, const char* _msg) {
+  std::cerr << "Error " << _code << ": " << _msg << std::endl;
+}
 ////////////////////////////////////////////////////////////////////////////////
 // Main
 

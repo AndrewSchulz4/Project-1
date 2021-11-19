@@ -1,2 +1,2 @@
-main.o: main.cpp GLInclude.h classes.h collision.h RayGen.h input.h \
- coloring.h
+main.o: main.cpp GLInclude.h CompileShaders.h classes.h collision.h \
+ RayGen.h input.h coloring.h
