@@ -38,7 +38,8 @@ INCL = $(GL_INCL)
 LIBS = $(GL_LIBS)
 
 OBJS = \
-       main.o
+       main.o \
+       CompileShaders.o
 
 DEPS = ${OBJS:%.o=%.d}
 
