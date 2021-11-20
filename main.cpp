@@ -113,8 +113,13 @@ draw(GLFWwindow* _window, double _currentTime) {
         Collisionpoint hitPlane = collision(mainRay, mainPlane);
         Collisionpoint hitSphere = collision_sphere(mainRay, sphere1);       
         if (hitPlane.getPosition() != zero){
-          Ray shadowRayPlane(hitPlane.getPosition(), mainLight.getPosition());
-          Collisionpoint intersect = collision_sphere(shadowRayPlane, sphere1);
+          Ray* shadowRayPlane = NULL;
+          if (mainLight.getLightType() == 0)
+            shadowRayPlane = new Ray(hitPlane.getPosition(), mainLight.getPosition());
+          else if (mainLight.getLightType() == 1)
+            shadowRayPlane = new Ray(hitPlane.getPosition(), hitPlane.getPosition() + mainLight.getDirection());
+          Collisionpoint intersect = collision_sphere(*shadowRayPlane, sphere1);
+          delete shadowRayPlane;
           if (intersect.getPosition() != zero){
             g_frame[(row*g_width) + col] = glm::vec4(0.23f, 0.22f, 0.23f, 1.0f);
           }

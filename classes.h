@@ -5,9 +5,22 @@ class Light {
   public:
   Light() {};
   glm::vec3 getPosition() {return position;};
-  Light(glm::vec3 position) : position(position) {}
+  glm::vec3 getDirection() {return direction;};
+
+  int getLightType() {return lightType;};
+
+  Light(int lightT, glm::vec3 inputVector){
+    lightType = lightT;
+    //std::cout << lightType << " new light " << std::endl;
+    if (lightType == 0) {position = inputVector;}
+    else if (lightType == 1) {direction = inputVector;}
+    else {position = {0,5,0};}
+
+  }
   private:
-  glm::vec3 position;
+  glm::vec3 position = {0,10,0}; //used in point light
+  glm::vec3 direction; //only used in directional light
+  int lightType; //0=point 1=directional
 };
 
 class Camera {
