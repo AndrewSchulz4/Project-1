@@ -118,8 +118,8 @@ draw(GLFWwindow* _window, double _currentTime) {
             shadowRayPlane = new Ray(hitPlane.getPosition(), mainLight.getPosition());
           else if (mainLight.getLightType() == 1)
             shadowRayPlane = new Ray(hitPlane.getPosition(), hitPlane.getPosition() + mainLight.getDirection());
+
           Collisionpoint intersect = collision_sphere(*shadowRayPlane, sphere1);
-          delete shadowRayPlane;
           if (intersect.getPosition() != zero){
             g_frame[(row*g_width) + col] = glm::vec4(0.23f, 0.22f, 0.23f, 1.0f);
           }
@@ -127,12 +127,18 @@ draw(GLFWwindow* _window, double _currentTime) {
             g_frame[(row*g_width)+col] = color(hitPlane, mainCamera, mainLight);
 
           }
+          delete shadowRayPlane;
         }
         //plane rendering as color white
         // sphere should render as color red
         if (hitSphere.getPosition() != zero){
-          Ray shadowRaySphere(hitSphere.getPosition(), mainLight.getPosition());
-          Collisionpoint intersect = collision_sphere(shadowRaySphere, sphere1);
+          Ray* shadowRaySphere = NULL;
+          if (mainLight.getLightType() == 0)
+              shadowRaySphere = new Ray(hitSphere.getPosition(), mainLight.getPosition());
+          if (mainLight.getLightType() == 1)
+              shadowRaySphere = new Ray(hitSphere.getPosition(), mainLight.getPosition());
+
+          Collisionpoint intersect = collision_sphere(*shadowRaySphere, sphere1);
           if(intersect.getPosition() != zero) {
             //coloring sphere with normals
             //v color vector
@@ -143,6 +149,7 @@ draw(GLFWwindow* _window, double _currentTime) {
             // g_frame[(row*g_width) + col] = normalc;
             g_frame[(row*g_width) + col] = color(hitSphere, mainCamera, mainLight);
           }
+          delete shadowRaySphere;
         }
      }      
    }
