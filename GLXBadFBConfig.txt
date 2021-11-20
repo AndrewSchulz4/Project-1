@@ -23,36 +23,38 @@
 #include "input.h"
 #include "coloring.h"
 ////////////////////////////////////////////////////////////////////////////////
+/// @brief Simple vertex class.
+struct Vertex {
+  glm::vec4 pos; ///< Position
+  glm::vec4 col; ///< Color
+
+  Vertex(const glm::vec4& _pos, const glm::vec4& _col) :
+    pos{_pos}, col{_col}{}
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these
 Plane mainPlane;
 Camera mainCamera;
 Light mainLight;
 Sphere sphere1;
-
-struct Vertex {
-  glm::vec4 pos;
-  glm::vec4 col;
-  Vertex(const glm::vec4& _pos, const glm::vec4& _col) : pos{_pos}, col{_col} {}
-};
-//Rendering System
+// Rendering system
 enum class Renderer {RayTracer, Rasterizer};
-constexpr Renderer g_renderer = Renderer::Rasterizer;
+constexpr Renderer g_renderer = Renderer::RayTracer;
 
 // Window
 int g_width{1360};
 int g_height{768};
 
-// Framebuffer
-
-//RayTracer
-GLuint g_texture;
-GLuint g_framebuffer;
+// RayTracer
+GLuint     g_texture; ///< Texture Object
+GLuint g_framebuffer; ///< Framebuffer Object
 std::unique_ptr<glm::vec4[]> g_frame{nullptr}; ///< Framebuffer
 
-//Rasterizer
-GLuint g_program{0};
-GLuint g_vao{0};
-GLuint g_vbo{0};
+// Rasterizer
+GLuint g_program{0}; ///< Shader program
+GLuint     g_vao{0}; ///< Vertex Array Object
+GLuint     g_vbo{0}; ///< Vertex Buffer Object
 
 // Frame rate
 const unsigned int FPS = 60;
@@ -65,68 +67,67 @@ float g_framesPerSecond{0.f};
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
 
-  //UNCOMMENT FOR DEBUGGING
-  //   std::cout << "plane_norm: " << plane.getN()[0] << " " << plane.getN()[1] << " " << plane.getN()[2] << std::endl;
-  //   std::cout << "plane_point: " << plane.getP()[0] << " " << plane.getP()[1] << " " << plane.getP()[2] << std::endl;
-
-
-  // std::cout << "position: " << camera.getPosition()[0] << " " << camera.getPosition()[1] << " " << camera.getPosition()[2] << std::endl;
-  // std::cout << "viewDirection: " << camera.getViewDirection()[0] << " " << camera.getViewDirection()[1] << " " << camera.getViewDirection()[2] << std::endl;
-  // std::cout << "up: " << camera.getUpVector()[0] << " " << camera.getUpVector()[1] << " " << camera.getUpVector()[2] << std::endl;
-
-  // std::cout << "right: " << camera.getRightVector()[0] << " " << camera.getRightVector()[1] << " " << camera.getRightVector()[2] << std::endl;
-
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Initialize GL settings
 void
 initialize(GLFWwindow* _window) {
   glClearColor(0.f, 0.f, 0.f, 1.f);
 
-  sceneInput(mainPlane, mainCamera, mainLight);
-  materialAndSphereInput(mainPlane, sphere1);
-
   switch(g_renderer) {
     case Renderer::RayTracer: {
+      glClearColor(0.f, 0.f, 0.f, 1.f);
+
       sceneInput(mainPlane, mainCamera, mainLight);
       materialAndSphereInput(mainPlane, sphere1);
+      // Generate texture
       glGenTextures(1, &g_texture);
+
+      // Generate framebuffer
       glGenFramebuffers(1, &g_framebuffer);
+
+
       g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
+
       break;
-    }
-    case Renderer::Rasterizer: {
+    case Renderer::Rasterizer:
       glEnable(GL_DEPTH_TEST);
-      g_program = compileProgram("passthrough.vert", "passthrough.frag");
-      glUseProgram(g_program);
+
+      g_program = compileProgram("passthrough.vert",
+                                "passthrough.frag");
+
+      // Simple static data
       static Vertex vertices[] = {
-        Vertex(glm::vec4{-1.f, -1.f, 0, 1}, glm::vec4{1.f, 0.f, 0.f, 1.f}),
-        Vertex(glm::vec4{1.f, 0.f, 0, 1}, glm::vec4{0.f, 1.f, 0.f ,1.f}),
-        Vertex(glm::vec4{0.f, 1.f, 0, 1}, glm::vec4{0.f, 0.f, 1.f, 1.f})
+        Vertex{glm::vec4{-1.f, -1.f, 0, 1}, glm::vec4{1.f, 0.f, 0.f, 1.f}},
+        Vertex{glm::vec4{ 1.f,  0.f, 0, 1}, glm::vec4{0.f, 1.f, 0.f, 1.f}},
+        Vertex{glm::vec4{ 0.f,  1.f, 0, 1}, glm::vec4{0.f, 0.f, 1.f, 1.f}}
       };
-      //Generate Vertex array
+    
+
+      // Generate vertex array
       glGenVertexArrays(1, &g_vao);
       glBindVertexArray(g_vao);
 
-      //Generate / specify vertex buffer
+      // Generate/specify vertex buffer
       glGenBuffers(1, &g_vbo);
       glBindBuffer(GL_ARRAY_BUFFER, g_vbo);
-      glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 3, vertices, GL_STATIC_DRAW);
+      glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*3, vertices, GL_STATIC_DRAW);
 
       glEnableVertexAttribArray(0);
-      glVertexAttribPointer(0,4,GL_FLOAT,GL_FALSE,sizeof(Vertex), (char*)NULL + 0);
-
+      glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE,
+                            sizeof(Vertex), (char*)NULL + 0);
       glEnableVertexAttribArray(1);
-      glVertexAttribPointer(1,4,GL_FLOAT, GL_FALSE, sizeof(Vertex), (char*)NULL + sizeof(glm::vec4));
+      glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE,
+                            sizeof(Vertex), (char*)NULL + sizeof(glm::vec4));
+
       glBindBuffer(GL_ARRAY_BUFFER, 0);
       glBindVertexArray(0);
+
       break;
     }
-  }
-  //Plane plane;
-  //sceneInput(plane);
-  //std::cout << plane.normalx << " " << plane.normaly << " " << plane.normalz;
 
-  g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
+  }
+        g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -134,9 +135,11 @@ initialize(GLFWwindow* _window) {
 ///
 /// Responsible for setting window size (viewport) and projection matrix.
 void resize(GLFWwindow* window, int _w, int _h) {
-  if(g_renderer == Renderer::RayTracer && g_width*g_height >= _w*_h) {
+  // Resize the framebuffer if we are ray tracing and the screen gets larger.
+  if (g_renderer == Renderer::RayTracer && g_width*g_height >= _w*_h) {
     g_frame = std::make_unique<glm::vec4[]>(_w*_h);
   }
+
   g_width = _w;
   g_height = _h;
 
@@ -151,82 +154,87 @@ void
 draw(GLFWwindow* _window, double _currentTime) {
   //////////////////////////////////////////////////////////////////////////////
   // Clear
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-if(g_renderer == Renderer::RayTracer) {
-  for(int i = 0; i< g_width*g_height; i++) {
-    g_frame[i] = glm::vec4(0.f, 0.4f, 0.f, 0.f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  if(g_renderer == Renderer::RayTracer) {
+    // Not strictly necessary...
+    for(int i = 0; i < g_width*g_height; ++i)
+      g_frame[i] = glm::vec4(0.f, 0.4f, 0.f, 0.f);
   }
-}
-
-
-  for(int i = 0; i < g_width*g_height; ++i)   
-    g_frame[i] = glm::vec4(0.f, 0.0f, 0.f, 0.f);
 
   //////////////////////////////////////////////////////////////////////////////
   // Draw
+  switch(g_renderer) {
+    case Renderer::RayTracer: {
+      // Simple static :P
+        glm::vec3 zero = {0.0, 0.0, 0.0};
 
-  // Simple static :P
+        for (int row = 0; row < g_height; row++) {
+            for (int col = 0; col < g_width; col++) {
+                Ray mainRay = raygen(mainCamera, mainCamera.getPosition(), row, col, g_width, g_height);
 
-//  for(int i = 0; i < g_width*g_height; i++)
-//    g_frame[i] = glm::vec4(float(rand())/RAND_MAX, float(rand())/RAND_MAX, float(rand())/RAND_MAX, 1.f);
-switch(g_renderer) {
+                Collisionpoint hitPlane = collision(mainRay, mainPlane);
+                Collisionpoint hitSphere = collision_sphere(mainRay, sphere1);
+                if (hitPlane.getPosition() != zero) {
+                    Ray shadowRayPlane(hitPlane.getPosition(), mainLight.getPosition());
+                    Collisionpoint intersect = collision_sphere(shadowRayPlane, sphere1);
+                    if (intersect.getPosition() != zero) {
+                        g_frame[(row * g_width) + col] = glm::vec4(0.23f, 0.22f, 0.23f, 1.0f);
+                    }
+                    else {
+                        g_frame[(row * g_width) + col] = color(hitPlane, mainCamera, mainLight);
 
-case Renderer::RayTracer: {
-  glm::vec3 zero = {0.0, 0.0, 0.0};
-  //std::cout << mainPlane.get_k_a()[0] << " " << mainPlane.get_k_a()[1] << " " << mainPlane.get_k_a()[2] << " " << mainPlane.get_k_a()[3] << std::endl;
-   for(int row = 0;  row < g_height; row++){
-     for (int col = 0; col < g_width; col++){
-        Ray mainRay = raygen(mainCamera, mainCamera.getPosition(), row, col, g_width, g_height);
-
-        Collisionpoint hitPlane = collision(mainRay, mainPlane);
-        Collisionpoint hitSphere = collision_sphere(mainRay, sphere1);       
-        if (hitPlane.getPosition() != zero){
-          Ray shadowRayPlane(hitPlane.getPosition(), mainLight.getPosition());
-          Collisionpoint intersect = collision_sphere(shadowRayPlane, sphere1);
-          if (intersect.getPosition() != zero){
-            g_frame[(row*g_width) + col] = glm::vec4(0.23f, 0.22f, 0.23f, 1.0f);
-          }
-          else {
-            g_frame[(row*g_width)+col] = color(hitPlane, mainCamera, mainLight);
-
-          }
+                    }
+                }
+                //plane rendering as color white
+                // sphere should render as color red
+                if (hitSphere.getPosition() != zero) {
+                    Ray shadowRaySphere(hitSphere.getPosition(), mainLight.getPosition());
+                    Collisionpoint intersect = collision_sphere(shadowRaySphere, sphere1);
+                    if (intersect.getPosition() != zero) {
+                        //coloring sphere with normals
+                        //v color vector
+                        //color = (1+v)/2
+                        // glm::vec3 normals = intersect.getNormal();
+                        // glm::vec4 normalc = {normals[0] + 1, normals[1] + 1, normals[2] + 1, 1};
+                        // normalc = normalc/2;
+                        // g_frame[(row*g_width) + col] = normalc;
+                        g_frame[(row * g_width) + col] = color(hitSphere, mainCamera, mainLight);
+                    }
+                }
+            }
         }
-        //plane rendering as color white
-        // sphere should render as color red
-        if (hitSphere.getPosition() != zero){
-          Ray shadowRaySphere(hitSphere.getPosition(), mainLight.getPosition());
-          Collisionpoint intersect = collision_sphere(shadowRaySphere, sphere1);
-          if(intersect.getPosition() != zero) {
-            //coloring sphere with normals
-            //v color vector
-            //color = (1+v)/2
-            // glm::vec3 normals = intersect.getNormal();
-            // glm::vec4 normalc = {normals[0] + 1, normals[1] + 1, normals[2] + 1, 1};
-            // normalc = normalc/2;
-            // g_frame[(row*g_width) + col] = normalc;
-            g_frame[(row*g_width) + col] = color(hitSphere, mainCamera, mainLight);
-          }
-        }
-     }      
-   }
-   glBindTexture(GL_TEXTURE_2D, g_texture);
-   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, g_width, g_height, 0, GL_RGBA, GL_FLOAT, g_frame.get());
-   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, g_framebuffer);
-   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-   glBlitFramebuffer(0, 0, g_width, g_height, 0, 0, g_width, g_height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-   glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-   glBindTexture(GL_TEXTURE_2D, 0);
-   break;
-}
-case Renderer::Rasterizer: {
-  glBindVertexArray(g_vao);
-  glDrawArrays(GL_TRIANGLES,0,3);
-  glBindVertexArray(0);
-  break;
-}
-}
+    
 
+      // Open GL3 way of copying an image from the CPU to the
+      // full screen on the GPU
+      glBindTexture(GL_TEXTURE_2D, g_texture);
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, g_width, g_height, 0, GL_RGBA,
+                  GL_FLOAT, g_frame.get());
+
+
+      glBindFramebuffer(GL_DRAW_FRAMEBUFFER, g_framebuffer);
+      glFramebufferTexture(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, g_texture, 0);
+
+      glBindFramebuffer(GL_READ_FRAMEBUFFER, g_framebuffer);
+      glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+      glBlitFramebuffer(0, 0, g_width, g_height, 0, 0, g_width, g_height,
+                        GL_COLOR_BUFFER_BIT, GL_NEAREST);
+      glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+      glBindTexture(GL_TEXTURE_2D, 0);
+      break;
+    }
+
+    case Renderer::Rasterizer: {
+      // Render the triangle
+      glBindVertexArray(g_vao);
+      glDrawArrays(GL_TRIANGLES, 0, 3);
+      glBindVertexArray(0);
+      break;
+    }
+  }
   glDrawPixels(g_width, g_height, GL_RGBA, GL_FLOAT, g_frame.get());
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -238,7 +246,10 @@ run(GLFWwindow* _window) {
   std::cout << "Starting main loop" << std::endl;
 
   while(!glfwWindowShouldClose(_window)) {
+    ////////////////////////////////////////////////////////////////////////////
+    // Draw
     draw(_window, glfwGetTime());
+
     ////////////////////////////////////////////////////////////////////////////
     // Show
     glfwSwapBuffers(_window);
@@ -275,34 +286,33 @@ keyCallback(GLFWwindow* _window, int _key, int _scancode,
   if(_action == GLFW_PRESS) {
     switch(_key) {
       // Escape key : quit application
-      case GLFW_KEY_ESCAPE:
+      case GLFW_KEY_ESCAPE: {
         std::cout << "Closing window" << std::endl;
         glfwSetWindowShouldClose(_window, GLFW_TRUE);
         break;
-        // Arrow keys
-      case GLFW_KEY_LEFT:
-      {
-        glm::vec3 newcent = {sphere1.getCenter()[0] - 1, sphere1.getCenter()[1], sphere1.getCenter()[2]};
-        sphere1.changeCenter(newcent);
-        break;
       }
-      case GLFW_KEY_RIGHT:
-      {
-        glm::vec3 newcent = {sphere1.getCenter()[0] + 1, sphere1.getCenter()[1], sphere1.getCenter()[2]};
-        sphere1.changeCenter(newcent);
-        break;
+        // Arrow keys
+      case GLFW_KEY_LEFT: {
+          glm::vec3 newcent = { sphere1.getCenter()[0] - 1, sphere1.getCenter()[1], sphere1.getCenter()[2] };
+          sphere1.changeCenter(newcent);
+          break;
+      }
+      case GLFW_KEY_RIGHT: {
+          glm::vec3 newcent = { sphere1.getCenter()[0] + 1, sphere1.getCenter()[1], sphere1.getCenter()[2] };
+          sphere1.changeCenter(newcent);
+          break;
       }
       case GLFW_KEY_UP:
       {
-        glm::vec3 newcent = {sphere1.getCenter()[0], sphere1.getCenter()[1], sphere1.getCenter()[2] - 1};
-        sphere1.changeCenter(newcent);
-        break;
+          glm::vec3 newcent = { sphere1.getCenter()[0], sphere1.getCenter()[1], sphere1.getCenter()[2] - 1 };
+          sphere1.changeCenter(newcent);
+          break;
       }
       case GLFW_KEY_DOWN:
       {
-        glm::vec3 newcent = {sphere1.getCenter()[0], sphere1.getCenter()[1], sphere1.getCenter()[2] + 1};
-        sphere1.changeCenter(newcent);
-        break;
+          glm::vec3 newcent = { sphere1.getCenter()[0], sphere1.getCenter()[1], sphere1.getCenter()[2] + 1 };
+          sphere1.changeCenter(newcent);
+          break;
       }
         // Unhandled
       default:
@@ -311,24 +321,33 @@ keyCallback(GLFWwindow* _window, int _key, int _scancode,
     }
   }
 }
-void windowCloseCallback(GLFWwindow* _window) {
+
+////////////////////////////////////////////////////////////////////////////////
+/// @brief Callback function for window closing
+/// @param _window
+void
+windowCloseCallback(GLFWwindow* _window) {
+  // Clean up memory by releasing GPU resources
   switch(g_renderer) {
-    case Renderer::RayTracer: {
+    case Renderer::RayTracer:
       glDeleteTextures(1, &g_texture);
       glDeleteFramebuffers(1, &g_framebuffer);
       break;
-    }
-    case Renderer::Rasterizer: {
+    case Renderer::Rasterizer:
       glDeleteBuffers(1, &g_vbo);
       glDeleteVertexArrays(1, &g_vao);
       break;
-    }
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/// @brief Error handler
+/// @param _code Error code
+/// @param _msg Error message
 void errorCallback(int _code, const char* _msg) {
   std::cerr << "Error " << _code << ": " << _msg << std::endl;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 // Main
 
@@ -343,6 +362,7 @@ main(int _argc, char** _argv) {
   // Initialize
   std::cout << "Initializing GLFWWindow" << std::endl;
   // GLFW
+  glfwSetErrorCallback(errorCallback);
   if(!glfwInit()) {
     std::cerr << "GLFW Cannot initialize" << std::endl;
     const char* err_msg;
@@ -352,9 +372,10 @@ main(int _argc, char** _argv) {
   }
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
   GLFWwindow* window = glfwCreateWindow(
     g_width, g_height, "Spiderling: A Rudamentary Game Engine", NULL, NULL);
   if(!window) {
