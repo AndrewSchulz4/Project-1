@@ -28,7 +28,7 @@ Camera mainCamera;
 Light mainLight;
 Sphere sphere1;
 // Window
-int g_width{1360};
+int g_width{900};
 int g_height{768};
 
 // Framebuffer
@@ -101,9 +101,6 @@ draw(GLFWwindow* _window, double _currentTime) {
 
   // Simple static :P
 
-//  for(int i = 0; i < g_width*g_height; i++)
-//    g_frame[i] = glm::vec4(float(rand())/RAND_MAX, float(rand())/RAND_MAX, float(rand())/RAND_MAX, 1.f);
-
   glm::vec3 zero = {0.0, 0.0, 0.0};
   //std::cout << mainPlane.get_k_a()[0] << " " << mainPlane.get_k_a()[1] << " " << mainPlane.get_k_a()[2] << " " << mainPlane.get_k_a()[3] << std::endl;
    for(int row = 0;  row < g_height; row++){
@@ -113,6 +110,7 @@ draw(GLFWwindow* _window, double _currentTime) {
         Collisionpoint hitPlane = collision(mainRay, mainPlane);
         Collisionpoint hitSphere = collision_sphere(mainRay, sphere1);       
         if (hitPlane.getPosition() != zero){
+          
           Ray shadowRayPlane(hitPlane.getPosition(), mainLight.getPosition());
           Collisionpoint intersect = collision_sphere(shadowRayPlane, sphere1);
           if (intersect.getPosition() != zero){
@@ -120,12 +118,12 @@ draw(GLFWwindow* _window, double _currentTime) {
           }
           else {
             g_frame[(row*g_width)+col] = color(hitPlane, mainCamera, mainLight);
-
           }
         }
         //plane rendering as color white
         // sphere should render as color red
         if (hitSphere.getPosition() != zero){
+          
           Ray shadowRaySphere(hitSphere.getPosition(), mainLight.getPosition());
           Collisionpoint intersect = collision_sphere(shadowRaySphere, sphere1);
           if(intersect.getPosition() != zero) {
@@ -139,8 +137,8 @@ draw(GLFWwindow* _window, double _currentTime) {
             g_frame[(row*g_width) + col] = color(hitSphere, mainCamera, mainLight);
           }
         }
-     }      
-   }
+     } 
+   }     
 
   glDrawPixels(g_width, g_height, GL_RGBA, GL_FLOAT, g_frame.get());
 }

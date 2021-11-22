@@ -98,10 +98,10 @@ Collisionpoint collision_sphere(Ray& ray, Sphere& sphere)
       {
         min_t = tval1;
       }
-      else if(tval1 > tval2 && tval2 > 0)
-      {
+      else
         min_t = tval2;
-      }
+      // if(tval1 > tval2 && tval2 > 0)
+      // {}
 
       
       //finding collision point with nearest value of t (min)

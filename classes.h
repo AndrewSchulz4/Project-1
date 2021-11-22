@@ -67,7 +67,7 @@ class Material {
   glm::vec4 I_a = {0.3f, 0.3f, 0.3f, 1.0f};
   glm::vec4 k_d = k_a;
   glm::vec4 I_d = {0.8f, 0.8f, 0.8f, 0.0f};
-  glm::vec4 k_s = {1.0f, 0.3f, 0.3f, 0.7f};
+  glm::vec4 k_s = {0.9f, 0.9f, 0.9f, 0.9f};
   glm::vec4 I_s = {0.8f, 0.8f, 0.8f, 0.0f};
 };
 
