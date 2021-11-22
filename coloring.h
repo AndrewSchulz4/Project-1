@@ -5,7 +5,22 @@
     GLfloat quadraticAttenuation = 0.05f;
     GLfloat rho = 100.0f; //causes sphere weird shading when above 0
 
-    GLfloat dist = distance(point.getPosition(), l.getPosition());    
+    // Ray* toLight = NULL;
+    // if (l.getLightType() == 0){ //point light calcs
+      
+    //   dist = distance(point.getPosition(), l.getPosition());   
+    //   totalAttenuation = 1 / (constantAttenuation + linearAttenuation * dist + quadraticAttenuation * (dist * dist));
+    //   toLight = new Ray(point.getPosition(), l.getPosition());
+
+    //   }
+    // if (l.getLightType() == 1){
+    //   dist = 10;
+    //   totalAttenuation = 1 / (constantAttenuation + linearAttenuation * dist + quadraticAttenuation * (dist * dist));
+    //   glm::vec3 dirr = point.getPosition() + l.getDirection();
+    //   toLight = new Ray(point.getPosition(), dirr);
+    // }
+
+      
 
     GLfloat totalAttenuation = 1;// / (constantAttenuation + linearAttenuation * dist + quadraticAttenuation * pow(dist, 2));
 
@@ -28,5 +43,7 @@
     glm::vec3 color3 =  ambient + diffuse + specular;
 
     glm::vec4 color4 = {color3[0], color3[1], color3[2], 1.0f};
+
+    //delete toLight;
     return color4;
   }

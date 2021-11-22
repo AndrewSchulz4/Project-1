@@ -67,6 +67,7 @@ void sceneInput(Plane& plane, Camera& camera, Light& light) {
   glm::vec3 camUp;
   glm::vec3 camRight;
   glm::vec3 lightPosition;
+  int lightType;
 
   float l,r,b,t,d;
   
@@ -111,11 +112,16 @@ void sceneInput(Plane& plane, Camera& camera, Light& light) {
     else if (category == "Light") {
       if (type == "light_position") {
         lightPosition = {val1, val2, val3};
+        std::cout << val1 << "//" << val2 << "//" << val3 << std::endl;
+      }
+      if (type == "light_type"){
+        lightType = val1;
       }
     }
-    plane = Plane(planeNorm, planePoint);
-    camera = Camera(camPosition, camViewDirection, camUp, camRight, l, r, b, t, d);
-    light = Light(lightPosition);
+
   }
+      plane = Plane(planeNorm, planePoint);
+    camera = Camera(camPosition, camViewDirection, camUp, camRight, l, r, b, t, d);
+    light = Light(lightType, lightPosition);
 }
 #endif
