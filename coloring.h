@@ -40,7 +40,7 @@
     //specular acting weird, sphere has no specular + plane has odd lighting
     glm::vec3 specular = totalAttenuation * point.materialv().get_k_s() * point.materialv().get_I_s() * pow(max(0.0f, dot(toCamera, reflectedRay)), rho);
 
-    glm::vec3 color3 =  ambient + diffuse + specular;
+    glm::vec3 color3 = ambient + diffuse + specular;
 
     glm::vec4 color4 = {color3[0], color3[1], color3[2], 1.0f};
 
