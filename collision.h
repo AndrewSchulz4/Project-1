@@ -14,7 +14,7 @@ std::ostream& operator<<(ostream& os, const glm::vec3 v) {
 //plane will be determined by what Darin brings as an input
 //can return bool, may want to return value of x which would be a glm::vec3?
 
-glm::vec3 collision(Ray& ray, Plane& ground_plane)
+Collisionpoint collision(Ray& ray, Plane& ground_plane)
 {
     float t;
     //vector for collision point (collision location)
@@ -42,17 +42,18 @@ glm::vec3 collision(Ray& ray, Plane& ground_plane)
     //std::cout << "Plane p " << ground_plane.getP() << " , " << ground_plane.getN() << std::endl;
    // std::cout << "n_dot_d " << n_dot_d << " , " << ap_dot_n << " , " << t << std::endl;
 
-    if(n_dot_d != 0 && t > 0 && t < 1000)
+    if(n_dot_d != 0 && t > 0)
     {
         //plug t into ray equation to find collision point x (will have normal n)
         x = ray.getOrigin() + (t * ray.getDirection());
     }
-    return x;
+    Collisionpoint collis(x, ground_plane.getN());
+    return collis;
         //cout << to_string(x) << endl;
 
   }
 
-glm::vec3 collision_sphere(Ray& ray, Sphere& sphere)
+Collisionpoint collision_sphere(Ray& ray, Sphere& sphere)
 {
     //solving for t
     float t;
@@ -79,19 +80,35 @@ glm::vec3 collision_sphere(Ray& ray, Sphere& sphere)
 
     //use discriminant and see if greater than 0, if so, collision
     float collision = ((B * B) - (4 * A * C));
-
+    
     if(collision < 0)
     {
-      return {0.0, 0.0, 0.0};
+      glm::vec3 zero = {0.0, 0.0, 0.0};
+      Collisionpoint nocollis(zero, zero);
+      return nocollis;
     }
     else{
       //t value is minimum solution to the quadratic formula
-      float min_t = min((-B + sqrt(collision))/(2*A), (-B - sqrt(collision))/(2*A));
+      //not minimum, take smallest t > 0, camera inside the sphere
+      //if/else statements
+      float tval1 = (-B + sqrt(collision))/(2*A);
+      float tval2 = (-B - sqrt(collision))/(2*A);
+      float min_t;
+      if(tval1 < tval2 && tval1 > 0)
+      {
+        min_t = tval1;
+      }
+      else
+        min_t = tval2;
+      // if(tval1 > tval2 && tval2 > 0)
+      // {}
+
+      
       //finding collision point with nearest value of t (min)
       glm::vec3 x = origin + (min_t * direction);
       //glm::vec3 normal = (x-center)/radius;
-
-      return x;
+      Collisionpoint collis(x, ((x-sphere.getCenter())/sphere.getRadius()));
+      return collis;
       //run ADS coloring to figure out color based on collision point normal and location
       //color(normal, ray)
     }

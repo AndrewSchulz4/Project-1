@@ -28,7 +28,7 @@ Camera mainCamera;
 Light mainLight;
 Sphere sphere1;
 // Window
-int g_width{1360};
+int g_width{900};
 int g_height{768};
 
 // Framebuffer
@@ -101,37 +101,54 @@ draw(GLFWwindow* _window, double _currentTime) {
 
   // Simple static :P
 
-//  for(int i = 0; i < g_width*g_height; i++)
-//    g_frame[i] = glm::vec4(float(rand())/RAND_MAX, float(rand())/RAND_MAX, float(rand())/RAND_MAX, 1.f);
-
   glm::vec3 zero = {0.0, 0.0, 0.0};
-  std::cout << mainPlane.get_k_a()[0] << " " << mainPlane.get_k_a()[1] << " " << mainPlane.get_k_a()[2] << " " << mainPlane.get_k_a()[3] << std::endl;
+  //std::cout << mainPlane.get_k_a()[0] << " " << mainPlane.get_k_a()[1] << " " << mainPlane.get_k_a()[2] << " " << mainPlane.get_k_a()[3] << std::endl;
    for(int row = 0;  row < g_height; row++){
      for (int col = 0; col < g_width; col++){
         Ray mainRay = raygen(mainCamera, mainCamera.getPosition(), row, col, g_width, g_height);
 
-        glm::vec3 hitPlane = collision(mainRay, mainPlane);
-        glm::vec3 hitSphere = collision_sphere(mainRay, sphere1);
-        if (hitPlane != zero){
-          Ray shadowRayPlane(hitPlane, mainLight.getPosition());
-          if (collision_sphere(shadowRayPlane, sphere1) != zero){
+        Collisionpoint hitPlane = collision(mainRay, mainPlane);
+        Collisionpoint hitSphere = collision_sphere(mainRay, sphere1);       
+        if (hitPlane.getPosition() != zero){
+          Ray* shadowRayPlane = NULL;
+          if (mainLight.getLightType() == 0)
+            shadowRayPlane = new Ray(hitPlane.getPosition(), mainLight.getPosition());
+          else if (mainLight.getLightType() == 1)
+            shadowRayPlane = new Ray(hitPlane.getPosition(), hitPlane.getPosition() + mainLight.getDirection());
+
+          Collisionpoint intersect = collision_sphere(*shadowRayPlane, sphere1);
+          if (intersect.getPosition() != zero){
             g_frame[(row*g_width) + col] = glm::vec4(0.23f, 0.22f, 0.23f, 1.0f);
           }
           else {
-            g_frame[(row*g_width)+col] = colorPlane(hitPlane, mainPlane, mainCamera, mainLight);
-
+            g_frame[(row*g_width)+col] = color(hitPlane, mainCamera, mainLight);
           }
+          delete shadowRayPlane;
         }
         //plane rendering as color white
         // sphere should render as color red
-        if (hitSphere != zero){
-          Ray shadowRaySphere(hitSphere, mainLight.getPosition());
-          if(collision_sphere(shadowRaySphere, sphere1) != zero) {
-            g_frame[(row*g_width) + col] = colorSphere(hitSphere, sphere1, mainCamera, mainLight);
+        if (hitSphere.getPosition() != zero){
+          Ray* shadowRaySphere = NULL;
+          if (mainLight.getLightType() == 0)
+              shadowRaySphere = new Ray(hitSphere.getPosition(), mainLight.getPosition());
+          if (mainLight.getLightType() == 1)
+              shadowRaySphere = new Ray(hitSphere.getPosition(), mainLight.getPosition());
+
+          Collisionpoint intersect = collision_sphere(*shadowRaySphere, sphere1);
+          if(intersect.getPosition() != zero) {
+            //coloring sphere with normals
+            //v color vector
+            //color = (1+v)/2
+            // glm::vec3 normals = intersect.getNormal();
+            // glm::vec4 normalc = {normals[0] + 1, normals[1] + 1, normals[2] + 1, 1};
+            // normalc = normalc/2;
+            // g_frame[(row*g_width) + col] = normalc;
+            g_frame[(row*g_width) + col] = color(hitSphere, mainCamera, mainLight);
           }
+          delete shadowRaySphere;
         }
-     }      
-   }
+     } 
+   }     
 
   glDrawPixels(g_width, g_height, GL_RGBA, GL_FLOAT, g_frame.get());
 }
@@ -189,13 +206,13 @@ keyCallback(GLFWwindow* _window, int _key, int _scancode,
         // Arrow keys
       case GLFW_KEY_LEFT:
       {
-        glm::vec3 newcent = {sphere1.getCenter()[0] + 1, sphere1.getCenter()[1], sphere1.getCenter()[2]};
+        glm::vec3 newcent = {sphere1.getCenter()[0] - 1, sphere1.getCenter()[1], sphere1.getCenter()[2]};
         sphere1.changeCenter(newcent);
         break;
       }
       case GLFW_KEY_RIGHT:
       {
-        glm::vec3 newcent = {sphere1.getCenter()[0] - 1, sphere1.getCenter()[1], sphere1.getCenter()[2]};
+        glm::vec3 newcent = {sphere1.getCenter()[0] + 1, sphere1.getCenter()[1], sphere1.getCenter()[2]};
         sphere1.changeCenter(newcent);
         break;
       }

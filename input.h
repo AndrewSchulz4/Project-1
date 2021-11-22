@@ -48,7 +48,7 @@ void materialAndSphereInput(Plane& plane, Sphere& s) {
           }
         }
       }   
-      plane.storeMaterials(plane_k_a, plane_k_d, plane_k_s, plane_I_a, plane_I_d, plane_I_s);
+      //plane.storeMaterials(plane_k_a, plane_k_d, plane_k_s, plane_I_a, plane_I_d, plane_I_s);
       s = Sphere(radius, spherePos);
 }
 void sceneInput(Plane& plane, Camera& camera, Light& light) {
@@ -67,6 +67,7 @@ void sceneInput(Plane& plane, Camera& camera, Light& light) {
   glm::vec3 camUp;
   glm::vec3 camRight;
   glm::vec3 lightPosition;
+  int lightType;
 
   float l,r,b,t,d;
   
@@ -111,11 +112,15 @@ void sceneInput(Plane& plane, Camera& camera, Light& light) {
     else if (category == "Light") {
       if (type == "light_position") {
         lightPosition = {val1, val2, val3};
+        std::cout << val1 << "//" << val2 << "//" << val3 << std::endl;
+      }
+      if (type == "light_type"){
+        lightType = val1;
       }
     }
+  }
     plane = Plane(planeNorm, planePoint);
     camera = Camera(camPosition, camViewDirection, camUp, camRight, l, r, b, t, d);
-    light = Light(lightPosition);
-  }
+    light = Light(lightType, lightPosition);
 }
 #endif
