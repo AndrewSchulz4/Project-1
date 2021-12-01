@@ -105,7 +105,8 @@ draw(GLFWwindow* _window, double _currentTime) {
   //std::cout << mainPlane.get_k_a()[0] << " " << mainPlane.get_k_a()[1] << " " << mainPlane.get_k_a()[2] << " " << mainPlane.get_k_a()[3] << std::endl;
    for(int row = 0;  row < g_height; row++){
      for (int col = 0; col < g_width; col++){
-        Ray mainRay = raygen(mainCamera, mainCamera.getPosition(), row, col, g_width, g_height);
+       //0 = perspective ray generation, 1 = parallel ray generation
+        Ray mainRay = raygen(mainCamera, mainCamera.getPosition(), row, col, g_width, g_height, 0);
 
         Collisionpoint hitPlane = collision(mainRay, mainPlane);
         Collisionpoint hitSphere = collision_sphere(mainRay, sphere1);       
