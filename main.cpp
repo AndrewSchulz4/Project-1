@@ -113,7 +113,7 @@ draw(GLFWwindow* _window, double _currentTime) {
         if (hitPlane.getPosition() != zero){
           Ray* shadowRayPlane = NULL;
           if (mainLight.getLightType() == 0)
-            shadowRayPlane = new Ray(hitPlane.getPosition(), mainLight.getPosition());
+            shadowRayPlane = new Ray(hitPlane.getPosition(), mainLight.getPosition());  
           else if (mainLight.getLightType() == 1)
             shadowRayPlane = new Ray(hitPlane.getPosition(), hitPlane.getPosition() + mainLight.getDirection());
 
@@ -205,6 +205,47 @@ keyCallback(GLFWwindow* _window, int _key, int _scancode,
         glfwSetWindowShouldClose(_window, GLFW_TRUE);
         break;
         // Arrow keys
+      case GLFW_KEY_Z:
+      {
+        glm::vec3 temp = {0,1,0};
+        mainCamera.updatePosition(temp);
+        break;
+      }
+      case GLFW_KEY_X:
+      {
+        glm::vec3 temp = {0,-1,0};
+        mainCamera.updatePosition(temp);
+        break;
+      }
+      case GLFW_KEY_A:
+      {
+        glm::vec3 temp = {-1,0,0};
+        mainCamera.updatePosition(temp);
+        break;
+
+      }
+      case GLFW_KEY_D:
+      {
+        glm::vec3 temp = {1,0,0};
+        mainCamera.updatePosition(temp);
+        break;
+
+      }
+      case GLFW_KEY_W:
+      {
+        glm::vec3 temp = {0,0,1};
+        mainCamera.updatePosition(temp);
+        break;
+
+      }
+      case GLFW_KEY_S:
+      {
+        glm::vec3 temp = {0,0,-1};
+        mainCamera.updatePosition(temp);
+        break;
+
+      }
+      
       case GLFW_KEY_LEFT:
       {
         glm::vec3 newcent = {sphere1.getCenter()[0] - 1, sphere1.getCenter()[1], sphere1.getCenter()[2]};

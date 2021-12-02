@@ -1,5 +1,5 @@
 //This function to be called from a for loop in main
-Ray raygen (Camera& cam, glm::vec3 cameraPos, int i, int j, int max_wid, int max_height) {
+Ray raygen (Camera& cam, int i, int j, int max_wid, int max_height) {
             // glm::vec3 viewDirection = {0, 0, -1}; //Temp for now
             // glm::vec3 up = {0,1,0};
             // glm::vec3 right = {1,0,0};
@@ -20,6 +20,7 @@ Ray raygen (Camera& cam, glm::vec3 cameraPos, int i, int j, int max_wid, int max
     glm::vec3 u_ray(0,1,0);
     glm::vec3 v_ray(1,0,0);
 
+
     w_ray = w_ray * d * -1;
     u_ray = u_ray * theta;
     v_ray = v_ray * sigma;
@@ -28,7 +29,7 @@ Ray raygen (Camera& cam, glm::vec3 cameraPos, int i, int j, int max_wid, int max
 
 
 
-        Ray newRay (cameraPos, dir_ray);
+        Ray newRay (cam.getPosition(), dir_ray);
 
 
     return newRay;

@@ -42,6 +42,15 @@ class Camera {
   void setAtVector(glm::vec3 r) {right = r;}
 
   Camera(glm::vec3 position, glm::vec3 viewDirection, glm::vec3 up, glm::vec3 right, float l, float r, float b, float t, float d) : position(position), viewDirection(viewDirection), up(up), right(right), l(l), r(r), b(b), t(t), d(d) {}
+  
+    void updatePosition (glm::vec3 newPos){
+      position += newPos;
+      viewDirection += newPos;
+      up += newPos;
+      right += newPos;
+    }
+
+  
   private:
     float r,l,t,b,d; //Right Left Top Bottom for Camera, d for Distance ie focal length
   glm::vec3 position;
