@@ -233,19 +233,48 @@ keyCallback(GLFWwindow* _window, int _key, int _scancode,
       }
       case GLFW_KEY_W:
       {
-        glm::vec3 temp = {0,0,1};
+        glm::vec3 temp = {0,0,-1};
         mainCamera.updatePosition(temp);
         break;
 
       }
       case GLFW_KEY_S:
       {
-        glm::vec3 temp = {0,0,-1};
+        glm::vec3 temp = {0,0,1};
         mainCamera.updatePosition(temp);
         break;
 
       }
-      
+      case GLFW_KEY_I: {
+        glm::vec3 temp = {0, 0, 1};
+        mainLight.updatePosition(temp);
+        break;
+      }
+      case GLFW_KEY_J: {
+        glm::vec3 temp = {-1, 0, 0};
+        mainLight.updatePosition(temp);
+        break;
+      }
+      case GLFW_KEY_K: {
+        glm::vec3 temp = {0, 0, -1};
+        mainLight.updatePosition(temp);
+        break;
+      }
+      case GLFW_KEY_L: {
+        glm::vec3 temp = {1, 0, 0};
+        mainLight.updatePosition(temp);
+        break;
+      }
+      case GLFW_KEY_O: {
+        glm::vec3 temp = {0, -1, 0};
+        mainLight.updatePosition(temp);
+        break;
+      }
+      case GLFW_KEY_P: {
+        glm::vec3 temp = {0, 1, 0};
+        mainLight.updatePosition(temp);
+        break;
+      }
       case GLFW_KEY_LEFT:
       {
         glm::vec3 newcent = {sphere1.getCenter()[0] - 1, sphere1.getCenter()[1], sphere1.getCenter()[2]};

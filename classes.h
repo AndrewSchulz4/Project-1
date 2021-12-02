@@ -17,6 +17,10 @@ class Light {
     else {position = {0,5,0};}
 
   }
+      void updatePosition (glm::vec3 newPos){
+      position += newPos;
+    }
+
   private:
   glm::vec3 position = {0,10,0}; //used in point light
   glm::vec3 direction; //only used in directional light
