@@ -299,6 +299,16 @@ keyCallback(GLFWwindow* _window, int _key, int _scancode,
         sphere1.changeCenter(newcent);
         break;
       }
+      case GLFW_KEY_M: {
+        glm::vec3 newcent = {sphere1.getCenter()[0], sphere1.getCenter()[1] + 1, sphere1.getCenter()[2]};
+        sphere1.changeCenter(newcent);
+        break;
+      }
+      case GLFW_KEY_N: {
+        glm::vec3 newcent = {sphere1.getCenter()[0], sphere1.getCenter()[1] - 1, sphere1.getCenter()[2]};
+        sphere1.changeCenter(newcent);
+        break;
+      }
         // Unhandled
       default:
         std::cout << "Unhandled key: " << _key << std::endl;
