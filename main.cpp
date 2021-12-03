@@ -27,7 +27,7 @@
 Plane mainPlane;
 Camera mainCamera;
 Light mainLight;
-Sphere sphere1;
+Sphere spheres[2];
 // Window
 int g_width{900};
 int g_height{768};
@@ -64,7 +64,7 @@ initialize(GLFWwindow* _window) {
   glClearColor(0.f, 0.f, 0.f, 1.f);
 
   sceneInput(mainPlane, mainCamera, mainLight);
-  materialAndSphereInput(mainPlane, sphere1);
+  materialAndSphereInput(mainPlane, spheres[0], spheres[1]);
 
   //Plane plane;
   //sceneInput(plane);
@@ -108,10 +108,11 @@ draw(GLFWwindow* _window, double _currentTime) {
    for(int row = 0;  row < g_height; row++){
      for (int col = 0; col < g_width; col++){
        //0 = perspective ray generation, 1 = parallel ray generation
+       for (auto s : spheres) {
         Ray mainRay = raygen(mainCamera, mainCamera.getPosition(), row, col, g_width, g_height, 0);
 
         Collisionpoint hitPlane = collision(mainRay, mainPlane);
-        Collisionpoint hitSphere = collision_sphere(mainRay, sphere1);       
+        Collisionpoint hitSphere = collision_sphere(mainRay, s);       
         if (hitPlane.getPosition() != zero){
           Ray* shadowRayPlane = NULL;
           if (mainLight.getLightType() == 0)
@@ -119,7 +120,7 @@ draw(GLFWwindow* _window, double _currentTime) {
           else if (mainLight.getLightType() == 1)
             shadowRayPlane = new Ray(hitPlane.getPosition(), hitPlane.getPosition() + mainLight.getDirection());
 
-          Collisionpoint intersect = collision_sphere(*shadowRayPlane, sphere1);
+          Collisionpoint intersect = collision_sphere(*shadowRayPlane, s);
           if (intersect.getPosition() != zero){
             g_frame[(row*g_width) + col] = glm::vec4(0.23f, 0.22f, 0.23f, 1.0f);
           }
@@ -128,7 +129,6 @@ draw(GLFWwindow* _window, double _currentTime) {
           }
           delete shadowRayPlane;
         }
-        //plane rendering as color white
         // sphere should render as color red
         if (hitSphere.getPosition() != zero){
           Ray* shadowRaySphere = NULL;
@@ -137,7 +137,8 @@ draw(GLFWwindow* _window, double _currentTime) {
           if (mainLight.getLightType() == 1)
               shadowRaySphere = new Ray(hitSphere.getPosition(), mainLight.getPosition());
 
-          Collisionpoint intersect = collision_sphere(*shadowRaySphere, sphere1);
+          Collisionpoint intersect = collision_sphere(*shadowRaySphere, s);
+        
           if(intersect.getPosition() != zero) {
             //coloring sphere with normals
             //v color vector
@@ -150,8 +151,9 @@ draw(GLFWwindow* _window, double _currentTime) {
           }
           delete shadowRaySphere;
         }
-     } 
-   }     
+       }
+     }
+  }     
 
   glDrawPixels(g_width, g_height, GL_RGBA, GL_FLOAT, g_frame.get());
 }
@@ -279,36 +281,36 @@ keyCallback(GLFWwindow* _window, int _key, int _scancode,
       }
       case GLFW_KEY_LEFT:
       {
-        glm::vec3 newcent = {sphere1.getCenter()[0] - 1, sphere1.getCenter()[1], sphere1.getCenter()[2]};
-        sphere1.changeCenter(newcent);
+        glm::vec3 newcent = {spheres[0].getCenter()[0] - 1, spheres[0].getCenter()[1], spheres[0].getCenter()[2]};
+        spheres[0].changeCenter(newcent);
         break;
       }
       case GLFW_KEY_RIGHT:
       {
-        glm::vec3 newcent = {sphere1.getCenter()[0] + 1, sphere1.getCenter()[1], sphere1.getCenter()[2]};
-        sphere1.changeCenter(newcent);
+        glm::vec3 newcent = {spheres[0].getCenter()[0] + 1, spheres[0].getCenter()[1], spheres[0].getCenter()[2]};
+        spheres[0].changeCenter(newcent);
         break;
       }
       case GLFW_KEY_UP:
       {
-        glm::vec3 newcent = {sphere1.getCenter()[0], sphere1.getCenter()[1], sphere1.getCenter()[2] - 1};
-        sphere1.changeCenter(newcent);
+        glm::vec3 newcent = {spheres[0].getCenter()[0], spheres[0].getCenter()[1], spheres[0].getCenter()[2] - 1};
+        spheres[0].changeCenter(newcent);
         break;
       }
       case GLFW_KEY_DOWN:
       {
-        glm::vec3 newcent = {sphere1.getCenter()[0], sphere1.getCenter()[1], sphere1.getCenter()[2] + 1};
-        sphere1.changeCenter(newcent);
+        glm::vec3 newcent = {spheres[0].getCenter()[0], spheres[0].getCenter()[1], spheres[0].getCenter()[2] + 1};
+        spheres[0].changeCenter(newcent);
         break;
       }
       case GLFW_KEY_M: {
-        glm::vec3 newcent = {sphere1.getCenter()[0], sphere1.getCenter()[1] + 1, sphere1.getCenter()[2]};
-        sphere1.changeCenter(newcent);
+        glm::vec3 newcent = {spheres[0].getCenter()[0], spheres[0].getCenter()[1] + 1, spheres[0].getCenter()[2]};
+        spheres[0].changeCenter(newcent);
         break;
       }
       case GLFW_KEY_N: {
-        glm::vec3 newcent = {sphere1.getCenter()[0], sphere1.getCenter()[1] - 1, sphere1.getCenter()[2]};
-        sphere1.changeCenter(newcent);
+        glm::vec3 newcent = {spheres[0].getCenter()[0], spheres[0].getCenter()[1] - 1, spheres[0].getCenter()[2]};
+        spheres[0].changeCenter(newcent);
         break;
       }
         // Unhandled

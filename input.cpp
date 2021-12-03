@@ -1,7 +1,7 @@
 
 #include <fstream>
 #include "classes.h"
-void materialAndSphereInput(Plane& plane, Sphere& s) {
+void materialAndSphereInput(Plane& plane, Sphere& s1, Sphere& s2) {
       std::ifstream input;
       input.open("materialsandsphere.txt");
       glm::vec4 plane_k_a;
@@ -10,12 +10,14 @@ void materialAndSphereInput(Plane& plane, Sphere& s) {
       glm::vec4 plane_I_a;
       glm::vec4 plane_I_d;
       glm::vec4 plane_I_s;
-      glm::vec3 spherePos;
+      glm::vec3 sphere1Pos;
+      glm::vec3 sphere2Pos;
       GLfloat val1;
       GLfloat val2;
       GLfloat val3;
       GLfloat val4;
-      GLfloat radius;
+      GLfloat radius1;
+      GLfloat radius2;
       std::string category;
       std::string type;
       while(input >> category >> type >> val1 >> val2 >> val3 >> val4) {
@@ -40,14 +42,19 @@ void materialAndSphereInput(Plane& plane, Sphere& s) {
           }
         }
         if (category == "Sphere") {
-          if (type == "sphere_values") {
-            radius = val1;
-            spherePos = {val2, val3, val4};
+          if (type == "sphere_values1") {
+            radius1 = val1;
+            sphere1Pos = {val2, val3, val4};
+          }
+          if (type == "sphere_values2") {
+            radius2 = val1;
+            sphere2Pos = {val2, val3, val4};
           }
         }
       }   
       //plane.storeMaterials(plane_k_a, plane_k_d, plane_k_s, plane_I_a, plane_I_d, plane_I_s);
-      s = Sphere(radius, spherePos);
+      s1 = Sphere(radius1, sphere1Pos);
+      s2 = Sphere(radius2, sphere2Pos);
 }
 void sceneInput(Plane& plane, Camera& camera, Light& light) {
   std::ifstream input;
