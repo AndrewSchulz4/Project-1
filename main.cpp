@@ -18,9 +18,10 @@
 #include "GLInclude.h"
 #include "classes.h"
 #include "collision.h"
-#include "properraygen.h"
-#include "input.h"
 #include "coloring.h"
+#include "input.h"
+#include "raygen.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these
 Plane mainPlane;
@@ -92,7 +93,7 @@ draw(GLFWwindow* _window, double _currentTime) {
   //////////////////////////////////////////////////////////////////////////////
   // Clear
   glClear(GL_COLOR_BUFFER_BIT);
-
+  #pragma omp parallel for
   for(int i = 0; i < g_width*g_height; ++i)   
     g_frame[i] = glm::vec4(0.f, 0.0f, 0.f, 0.f);
 
@@ -103,6 +104,7 @@ draw(GLFWwindow* _window, double _currentTime) {
 
   glm::vec3 zero = {0.0, 0.0, 0.0};
   //std::cout << mainPlane.get_k_a()[0] << " " << mainPlane.get_k_a()[1] << " " << mainPlane.get_k_a()[2] << " " << mainPlane.get_k_a()[3] << std::endl;
+   #pragma omp parallel for collapse(2)
    for(int row = 0;  row < g_height; row++){
      for (int col = 0; col < g_width; col++){
        //0 = perspective ray generation, 1 = parallel ray generation
