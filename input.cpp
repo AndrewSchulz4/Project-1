@@ -1,5 +1,6 @@
 
 #include <fstream>
+#include <iostream>
 #include "classes.h"
 void materialAndSphereInput(Plane& plane, Sphere& s) {
       std::ifstream input;
@@ -45,9 +46,14 @@ void materialAndSphereInput(Plane& plane, Sphere& s) {
             spherePos = {val2, val3, val4};
           }
         }
-      }   
-      //plane.storeMaterials(plane_k_a, plane_k_d, plane_k_s, plane_I_a, plane_I_d, plane_I_s);
-      s = Sphere(radius, spherePos);
+      }
+      
+      Material M(plane_k_a, plane_k_d, plane_k_s, plane_I_a, plane_I_d, plane_I_s);
+      plane.setM(M);
+      std::cout << to_string(plane.getM().get_I_a()) << std::endl;
+      s.change(radius, spherePos);
+      s.setM(M);
+      std::cout << to_string(s.getM().get_I_a()) << std::endl;
 }
 void sceneInput(Plane& plane, Camera& camera, Light& light) {
   std::ifstream input;

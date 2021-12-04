@@ -75,12 +75,12 @@ class Ray {
 };
 class Material {
   public:
-  // Material(glm::vec4 k_A, glm::vec4 k_D, glm::vec4 k_S, glm::vec4 I_A, glm::vec4 I_D, glm::vec4 I_S) { k_a = k_A; 
-  //   k_d = k_D;  
-  //   k_s = k_S; 
-  //   I_a = I_A; 
-  //   I_d = I_D; 
-  //   I_s = I_S; }
+    void setM(glm::vec4 k_A, glm::vec4 k_D, glm::vec4 k_S, glm::vec4 I_A, glm::vec4 I_D, glm::vec4 I_S) { k_a = k_A; 
+    k_d = k_D;  
+    k_s = k_S; 
+    I_a = I_A; 
+    I_d = I_D; 
+    I_s = I_S; }
   Material() {}
   glm::vec4 get_k_a() {return k_a;}
   glm::vec4 get_k_d() {return k_d;}
@@ -88,13 +88,14 @@ class Material {
   glm::vec4 get_I_a() {return I_a;}
   glm::vec4 get_I_d() {return I_d;}
   glm::vec4 get_I_s() {return I_s;}
+  Material(glm::vec4 k_a, glm::vec4 k_d, glm::vec4 k_s, glm::vec4 I_a, glm::vec4 I_d, glm::vec4 I_s) : k_a(k_a), I_a(I_a), k_d(k_d), I_d(I_d), k_s(k_s), I_s(I_s) {}
   private:
-  glm::vec4 k_a = {1.0f, 0.0f, 0.0f, 1.0f};
-  glm::vec4 I_a = {0.3f, 0.3f, 0.3f, 1.0f};
-  glm::vec4 k_d = k_a;
-  glm::vec4 I_d = {0.8f, 0.8f, 0.8f, 0.0f};
-  glm::vec4 k_s = {0.9f, 0.9f, 0.9f, 0.9f};
-  glm::vec4 I_s = {0.8f, 0.8f, 0.8f, 0.0f};
+  glm::vec4 k_a;
+  glm::vec4 I_a;
+  glm::vec4 k_d;
+  glm::vec4 I_d;
+  glm::vec4 k_s;
+  glm::vec4 I_s;
 };
 
 class Plane {
@@ -105,6 +106,7 @@ public:
   Material getM() {return material;}
   void setNorm (glm::vec3 norm) {normal = norm;}
   void setP (glm::vec3 point) {p = point;}
+  void setM (Material mat) {material = mat;}
   Plane(glm::vec3 normal, glm::vec3 p) : normal(normal), p(p) {}
 private:
   glm::vec3 normal;
@@ -115,10 +117,11 @@ private:
 class Sphere {
   public:
   Sphere() {};
-  Sphere(float radius, glm::vec3 center) : radius(radius), center(center) {}
+  void change(float r, glm::vec3 c) {radius = r; center = c;}
   float getRadius() { return radius; }
   glm::vec3 getCenter() { return center; }
   Material getM() {return material;}
+  void setM(Material m) {material = m; }
   void changeCenter(glm::vec3 newCenter) { center = newCenter; }
 
   private:
@@ -127,9 +130,9 @@ class Sphere {
   Material material;
 };
 
-class Collisionpoint{
+class Collisionpoint {
   public:
-  Collisionpoint(glm::vec3 position, glm::vec3 normal) : position(position), normal(normal) {};
+  Collisionpoint(glm::vec3 position, glm::vec3 normal, Material material) : position(position), normal(normal), material(material) {};
   glm::vec3 getPosition() { return position; }
   glm::vec3 getNormal() { return normal; }
   Material materialv() { return material;}

@@ -66,10 +66,6 @@ initialize(GLFWwindow* _window) {
   sceneInput(mainPlane, mainCamera, mainLight);
   materialAndSphereInput(mainPlane, sphere1);
 
-  //Plane plane;
-  //sceneInput(plane);
-  //std::cout << plane.normalx << " " << plane.normaly << " " << plane.normalz;
-
   g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
 }
 
@@ -121,7 +117,10 @@ draw(GLFWwindow* _window, double _currentTime) {
 
           Collisionpoint intersect = collision_sphere(*shadowRayPlane, sphere1);
           if (intersect.getPosition() != zero){
-            g_frame[(row*g_width) + col] = glm::vec4(0.23f, 0.22f, 0.23f, 1.0f);
+            //point.materialv().get_k_a() * point.materialv().get_I_a();
+            glm::vec3 toLight = glm::normalize(mainLight.getPosition() - hitPlane.getPosition());
+            glm::vec3 ambient = (hitPlane.materialv().get_k_a() * hitPlane.materialv().get_I_a());
+            g_frame[(row*g_width) + col] = glm::vec4(ambient[0], ambient[1], ambient[2], 1.0f);
           }
           else {
             g_frame[(row*g_width)+col] = color(hitPlane, mainCamera, mainLight);
@@ -177,7 +176,7 @@ run(GLFWwindow* _window) {
     g_frameRate = duration_cast<duration<float>>(time - g_frameTime).count();
     g_frameTime = time;
     g_framesPerSecond = 1.f/(g_delay + g_frameRate);
-    printf("FPS: %6.2f\n", g_framesPerSecond);
+    //printf("FPS: %6.2f\n", g_framesPerSecond);
 
     ////////////////////////////////////////////////////////////////////////////
     // Delay to fix the frame-rate
@@ -248,7 +247,7 @@ keyCallback(GLFWwindow* _window, int _key, int _scancode,
 
       }
       case GLFW_KEY_I: {
-        glm::vec3 temp = {0, 0, 1};
+        glm::vec3 temp = {0, 0, -1};
         mainLight.updatePosition(temp);
         break;
       }
@@ -258,7 +257,7 @@ keyCallback(GLFWwindow* _window, int _key, int _scancode,
         break;
       }
       case GLFW_KEY_K: {
-        glm::vec3 temp = {0, 0, -1};
+        glm::vec3 temp = {0, 0, 1};
         mainLight.updatePosition(temp);
         break;
       }
