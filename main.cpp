@@ -111,15 +111,19 @@ draw(GLFWwindow* _window, double _currentTime) {
         Collisionpoint hitPlane = collision(mainRay, mainPlane);
         Collisionpoint hitSphere = collision_sphere(mainRay, sphere1);       
         if (hitPlane.getPosition() != zero){
+           //Ray shadowRayPlane(hitPlane.getPosition(), mainLight.getPosition()); 
+          
           Ray* shadowRayPlane = NULL;
           if (mainLight.getLightType() == 0)
-            shadowRayPlane = new Ray(hitPlane.getPosition(), mainLight.getPosition());  
+            shadowRayPlane = new Ray(hitPlane.getPosition(), hitPlane.getPosition() - mainLight.getPosition());  
           else if (mainLight.getLightType() == 1)
-            shadowRayPlane = new Ray(hitPlane.getPosition(), hitPlane.getPosition() + mainLight.getDirection());
+            shadowRayPlane = new Ray(hitPlane.getPosition(), hitPlane.getPosition() + glm::vec3(0,1,0));
 
           Collisionpoint intersect = collision_sphere(*shadowRayPlane, sphere1);
           if (intersect.getPosition() != zero){
             g_frame[(row*g_width) + col] = glm::vec4(0.23f, 0.22f, 0.23f, 1.0f);
+           //g_frame[(row*g_width) + col] = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
           }
           else {
             g_frame[(row*g_width)+col] = color(hitPlane, mainCamera, mainLight);
