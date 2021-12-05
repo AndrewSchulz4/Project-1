@@ -173,6 +173,8 @@ run(GLFWwindow* _window) {
     glfwSwapBuffers(_window);
     glfwPollEvents();
 
+    
+
     ////////////////////////////////////////////////////////////////////////////
     // Record frame time
     high_resolution_clock::time_point time = high_resolution_clock::now();
@@ -180,7 +182,7 @@ run(GLFWwindow* _window) {
     g_frameTime = time;
     g_framesPerSecond = 1.f/(g_delay + g_frameRate);
     printf("FPS: %6.2f\n", g_framesPerSecond);
-
+    sphere1.animateFrame(g_frameRate);
     ////////////////////////////////////////////////////////////////////////////
     // Delay to fix the frame-rate
     g_delay = std::max(0.f, 1.f/FPS - g_frameRate);

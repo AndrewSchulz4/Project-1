@@ -111,13 +111,33 @@ private:
 class Sphere {
   public:
   Sphere() {};
-  Sphere(float radius, glm::vec3 center) : radius(radius), center(center) {}
+  Sphere(float radius, glm::vec3 center) : radius(radius), center(center) { animate = true; animateCenter = 1; animateConstant = 1;}
   float getRadius() { return radius; }
   glm::vec3 getCenter() { return center; }
   Material getM() {return material;}
   void changeCenter(glm::vec3 newCenter) { center = newCenter; }
+  void toggleAnimate()
+  {
+    if (animate) {animate = false;}
+    else {animate = true;}
+  }
+  void animateFrame(float fElapsedTime){
+    if (!animate) {return;}
+          center.x += animateConstant * fElapsedTime;
+          animateCenter += animateConstant *fElapsedTime;
+
+    if (animateCenter > 5) {
+      animateConstant = -1;
+    } 
+    else if (animateCenter < -5){
+      animateConstant = 1;
+    }
+  }
 
   private:
+  bool animate;
+  float animateCenter;
+  float animateConstant;
   float radius;
   glm::vec3 center;
   Material material;
