@@ -64,7 +64,7 @@
             for(int j = 0; j < lights.size(); j++)
             {
               if (lights[j].getLightType() == 0)
-                shadowRayPlane = new Ray(intersect.getPosition(), lights[j].getPosition());  
+                shadowRayPlane = new Ray(intersect.getPosition(), intersect.getPosition() - lights[j].getPosition());  
               //else if (lights[j].getLightType() == 1)
               // shadowRayPlane = new Ray(intersect.getPosition(), intersect.getPosition() + lights[j].getDirection());
               //if ray from plane point to light hits the sphere (in the shadow)
