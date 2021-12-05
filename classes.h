@@ -117,6 +117,7 @@ private:
 class Sphere {
   public:
   Sphere() {};
+  Sphere(int radius, glm::vec3 center, Material material) : radius(radius), center(center), material(material) {}
   void change(float r, glm::vec3 c) {radius = r; center = c;}
   float getRadius() { return radius; }
   glm::vec3 getCenter() { return center; }
@@ -133,6 +134,7 @@ class Sphere {
 class Collisionpoint {
   public:
   Collisionpoint(glm::vec3 position, glm::vec3 normal, Material material) : position(position), normal(normal), material(material) {};
+  Collisionpoint() {position = {0, 0, 0}; normal = {0, 0, 0}; };
   glm::vec3 getPosition() { return position; }
   glm::vec3 getNormal() { return normal; }
   Material materialv() { return material;}

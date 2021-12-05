@@ -12,8 +12,10 @@
 #include <iostream>
 #include <memory>
 #include <thread>
+#include <omp.h>
 //#include <fstream>
 #include <iomanip>
+#include <vector>
 // Engine
 #include "GLInclude.h"
 #include "classes.h"
@@ -22,12 +24,15 @@
 #include "input.h"
 #include "raygen.h"
 
+
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these
 Plane mainPlane;
 Camera mainCamera;
 Light mainLight;
-Sphere sphere1;
+std::vector<Light> lights;
+std::vector<Sphere> spheres_scene;
+
 // Window
 int g_width{900};
 int g_height{768};
@@ -62,10 +67,33 @@ float g_framesPerSecond{0.f};
 void
 initialize(GLFWwindow* _window) {
   glClearColor(0.f, 0.f, 0.f, 1.f);
-
+  Sphere sphere1;
   sceneInput(mainPlane, mainCamera, mainLight);
   materialAndSphereInput(mainPlane, sphere1);
+  
+  //generating multiple lights and spheres with different colors
+    glm::vec4 k_a = {0.0f, 0.0f, 1.0f, 1.0f};
+    glm::vec4 I_a = {.3f, .3f, .3f, 1.0f};
+    glm::vec4 k_d = k_a;
+    glm::vec4 I_d = {.8f, .8f, .8f, 0.0};
+    glm::vec4 k_s = {.9f,.9f, .9f, .9f};
+    glm::vec4 I_s = {.8f, .8f, .8f, 0.0f};
+    glm::vec4 k_a2 = {1.0f, 1.0f, 0.2f, 1.0f};
+    Material mat(k_a, k_d, k_s, I_a, I_d, I_s);    
+    Material mat2(k_a2, k_a2, k_s, I_a, I_d, I_s);
+    glm::vec3 center = {-5.0f, 2.0f, -25.0f};
+    glm::vec3 center2 = {5.0f, 2.0f, -20.0f};
+    Sphere S(5, center, mat);
+    Sphere S2(3, center2, mat2);
+    spheres_scene.push_back(S);
+    spheres_scene.push_back(S2);
+    spheres_scene.push_back(sphere1);
+    lights.push_back(mainLight);
+    glm::vec3 lightpos = {10, 7, -5};
+    Light light1(0, lightpos);
+    lights.push_back(light1);
 
+    
   g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
 }
 
@@ -89,69 +117,85 @@ draw(GLFWwindow* _window, double _currentTime) {
   //////////////////////////////////////////////////////////////////////////////
   // Clear
   glClear(GL_COLOR_BUFFER_BIT);
-  #pragma omp parallel for
   for(int i = 0; i < g_width*g_height; ++i)   
-    g_frame[i] = glm::vec4(0.f, 0.0f, 0.f, 0.f);
+    g_frame[i] = glm::vec4(0.f, 0.4f, 0.4f, 0.f);
 
   //////////////////////////////////////////////////////////////////////////////
   // Draw
 
   // Simple static :P
-
+  //std::cout << spheres_scene.size();
   glm::vec3 zero = {0.0, 0.0, 0.0};
   //std::cout << mainPlane.get_k_a()[0] << " " << mainPlane.get_k_a()[1] << " " << mainPlane.get_k_a()[2] << " " << mainPlane.get_k_a()[3] << std::endl;
-   #pragma omp parallel for collapse(2)
+  #pragma omp parallel
+  {
+   #pragma omp for
    for(int row = 0;  row < g_height; row++){
      for (int col = 0; col < g_width; col++){
+       //std::cout << omp_get_thread_num() << std::endl;
        //0 = perspective ray generation, 1 = parallel ray generation
         Ray mainRay = raygen(mainCamera, mainCamera.getPosition(), row, col, g_width, g_height, 0);
 
         Collisionpoint hitPlane = collision(mainRay, mainPlane);
-        Collisionpoint hitSphere = collision_sphere(mainRay, sphere1);       
-        if (hitPlane.getPosition() != zero){
-          Ray* shadowRayPlane = NULL;
-          if (mainLight.getLightType() == 0)
-            shadowRayPlane = new Ray(hitPlane.getPosition(), mainLight.getPosition());  
-          else if (mainLight.getLightType() == 1)
-            shadowRayPlane = new Ray(hitPlane.getPosition(), hitPlane.getPosition() + mainLight.getDirection());
+        glm::vec3 zero = {0, 0, 0};
+        //testing for collision for each sphere from ray
+        Collisionpoint hitSphere;
 
-          Collisionpoint intersect = collision_sphere(*shadowRayPlane, sphere1);
-          if (intersect.getPosition() != zero){
-            //point.materialv().get_k_a() * point.materialv().get_I_a();
-            glm::vec3 toLight = glm::normalize(mainLight.getPosition() - hitPlane.getPosition());
-            glm::vec3 ambient = (hitPlane.materialv().get_k_a() * hitPlane.materialv().get_I_a());
-            g_frame[(row*g_width) + col] = glm::vec4(ambient[0], ambient[1], ambient[2], 1.0f);
+        for(int i = 0; i < spheres_scene.size(); i++)
+        {
+          Sphere sphere = spheres_scene[i];
+          Collisionpoint hitSpheret = collision_sphere(mainRay, sphere);
+          //if the ray hits both spheres take closer one
+          //if(hitSpheret.getPosition() != zero)
+            //std::cout << to_string(hitSpheret.getPosition()) << std::endl;
+          if(hitSphere.getPosition() == zero && hitSpheret.getPosition() != zero)
+            hitSphere = hitSpheret;
+          if(hitSphere.getPosition() != zero && hitSpheret.getPosition() != zero)
+          {
+            //will render closest sphere
+            if(distance(mainCamera.getPosition(), hitSphere.getPosition()) > distance(mainCamera.getPosition(), hitSpheret.getPosition()))
+            {
+                hitSphere = hitSpheret;
+            }
           }
-          else {
-            g_frame[(row*g_width)+col] = color(hitPlane, mainCamera, mainLight);
-          }
-          delete shadowRayPlane;
         }
-        //plane rendering as color white
-        // sphere should render as color red
-        if (hitSphere.getPosition() != zero){
-          Ray* shadowRaySphere = NULL;
-          if (mainLight.getLightType() == 0)
-              shadowRaySphere = new Ray(hitSphere.getPosition(), mainLight.getPosition());
-          if (mainLight.getLightType() == 1)
-              shadowRaySphere = new Ray(hitSphere.getPosition(), mainLight.getPosition());
 
-          Collisionpoint intersect = collision_sphere(*shadowRaySphere, sphere1);
-          if(intersect.getPosition() != zero) {
-            //coloring sphere with normals
-            //v color vector
-            //color = (1+v)/2
-            // glm::vec3 normals = intersect.getNormal();
-            // glm::vec4 normalc = {normals[0] + 1, normals[1] + 1, normals[2] + 1, 1};
-            // normalc = normalc/2;
-            // g_frame[(row*g_width) + col] = normalc;
-            g_frame[(row*g_width) + col] = color(hitSphere, mainCamera, mainLight);
+          //if plane is hit
+          if (hitPlane.getPosition() != zero){
+            bool shadow = inShadow(hitPlane, lights, spheres_scene);
+            if(shadow){
+              glm::vec3 toLight = glm::normalize(mainLight.getPosition() - hitPlane.getPosition());
+              glm::vec3 ambient = (hitPlane.materialv().get_k_a() * hitPlane.materialv().get_I_a());
+              g_frame[(row*g_width) + col] = glm::vec4(ambient[0], ambient[1], ambient[2], 1.0f);
+            }
+            else {
+              //if not in shadow color normally
+              g_frame[(row*g_width)+col] = color(hitPlane, mainCamera, lights);
+            }
           }
-          delete shadowRaySphere;
-        }
-     } 
-   }     
-
+            //if the ray has hit a sphere
+            if (hitSphere.getPosition() != zero){
+              g_frame[(row*g_width) + col] = color(hitSphere, mainCamera, lights);
+            //     Ray* shadowRaySphere = NULL;
+            // if (mainLight.getLightType() == 0)
+            //     shadowRaySphere = new Ray(hitSphere.getPosition(), mainLight.getPosition());
+            // if (mainLight.getLightType() == 1)
+            //     shadowRaySphere = new Ray(hitSphere.getPosition(), mainLight.getPosition());
+            // //if point on
+            // Collisionpoint intersect = collision_sphere(*shadowRaySphere, spheres_scene[0]);
+            // for(int i = 1; i < spheres_scene.size(); i++)
+            // {
+            //   Collisionpoint intersect = collision_sphere(*shadowRaySphere, spheres_scene[i]);
+            // }
+            // if(intersect.getPosition() != zero) {
+            //   g_frame[(row*g_width) + col] = color(hitSphere, mainCamera, mainLight);
+            // }
+            // delete shadowRaySphere;
+          }
+      } 
+   }
+  }     
+  //std::cout << to_string(spheres_scene[0].getCenter());
   glDrawPixels(g_width, g_height, GL_RGBA, GL_FLOAT, g_frame.get());
 }
 
@@ -176,7 +220,7 @@ run(GLFWwindow* _window) {
     g_frameRate = duration_cast<duration<float>>(time - g_frameTime).count();
     g_frameTime = time;
     g_framesPerSecond = 1.f/(g_delay + g_frameRate);
-    //printf("FPS: %6.2f\n", g_framesPerSecond);
+    printf("FPS: %6.2f\n", g_framesPerSecond);
 
     ////////////////////////////////////////////////////////////////////////////
     // Delay to fix the frame-rate
@@ -278,26 +322,27 @@ keyCallback(GLFWwindow* _window, int _key, int _scancode,
       }
       case GLFW_KEY_LEFT:
       {
-        glm::vec3 newcent = {sphere1.getCenter()[0] - 1, sphere1.getCenter()[1], sphere1.getCenter()[2]};
-        sphere1.changeCenter(newcent);
+        glm::vec3 newcent = {spheres_scene[0].getCenter()[0] - 1, spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2]};
+        spheres_scene[0].changeCenter(newcent);
         break;
       }
       case GLFW_KEY_RIGHT:
       {
-        glm::vec3 newcent = {sphere1.getCenter()[0] + 1, sphere1.getCenter()[1], sphere1.getCenter()[2]};
-        sphere1.changeCenter(newcent);
+        glm::vec3 newcent = {spheres_scene[0].getCenter()[0] + 1, spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2]};
+        spheres_scene[0].changeCenter(newcent);
         break;
       }
       case GLFW_KEY_UP:
       {
-        glm::vec3 newcent = {sphere1.getCenter()[0], sphere1.getCenter()[1], sphere1.getCenter()[2] - 1};
-        sphere1.changeCenter(newcent);
+        glm::vec3 newcent = {spheres_scene[0].getCenter()[0], spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2] - 1};
+        spheres_scene[0].changeCenter(newcent);
+
         break;
       }
       case GLFW_KEY_DOWN:
       {
-        glm::vec3 newcent = {sphere1.getCenter()[0], sphere1.getCenter()[1], sphere1.getCenter()[2] + 1};
-        sphere1.changeCenter(newcent);
+        glm::vec3 newcent = {spheres_scene[0].getCenter()[0], spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2] + 1};
+        spheres_scene[0].changeCenter(newcent);
         break;
       }
         // Unhandled
