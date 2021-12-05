@@ -290,71 +290,71 @@ keyCallback(GLFWwindow* _window, int _key, int _scancode,
         break;
 
       }
-      case GLFW_KEY_I: {
-        glm::vec3 temp = {0, 0, -1};
-        mainLight.updatePosition(temp);
-        break;
-      }
-      case GLFW_KEY_J: {
-        glm::vec3 temp = {-1, 0, 0};
-        mainLight.updatePosition(temp);
-        break;
-      }
-      case GLFW_KEY_K: {
-        glm::vec3 temp = {0, 0, 1};
-        mainLight.updatePosition(temp);
-        break;
-      }
-      case GLFW_KEY_L: {
-        glm::vec3 temp = {1, 0, 0};
-        mainLight.updatePosition(temp);
-        break;
-      }
-      case GLFW_KEY_O: {
-        glm::vec3 temp = {0, -1, 0};
-        mainLight.updatePosition(temp);
-        break;
-      }
-      case GLFW_KEY_P: {
-        glm::vec3 temp = {0, 1, 0};
-        mainLight.updatePosition(temp);
-        break;
-      }
-      case GLFW_KEY_LEFT:
-      {
-        glm::vec3 newcent = {spheres_scene[0].getCenter()[0] - 1, spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2]};
-        spheres_scene[0].changeCenter(newcent);
-        break;
-      }
-      case GLFW_KEY_RIGHT:
-      {
-        glm::vec3 newcent = {spheres_scene[0].getCenter()[0] + 1, spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2]};
-        spheres_scene[0].changeCenter(newcent);
-        break;
-      }
-      case GLFW_KEY_UP:
-      {
-        glm::vec3 newcent = {spheres_scene[0].getCenter()[0], spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2] - 1};
-        spheres_scene[0].changeCenter(newcent);
+      // case GLFW_KEY_I: {
+      //   glm::vec3 temp = {0, 0, -1};
+      //   mainLight.updatePosition(temp);
+      //   break;
+      // }
+      // case GLFW_KEY_J: {
+      //   glm::vec3 temp = {-1, 0, 0};
+      //   mainLight.updatePosition(temp);
+      //   break;
+      // }
+      // case GLFW_KEY_K: {
+      //   glm::vec3 temp = {0, 0, 1};
+      //   mainLight.updatePosition(temp);
+      //   break;
+      // }
+      // case GLFW_KEY_L: {
+      //   glm::vec3 temp = {1, 0, 0};
+      //   mainLight.updatePosition(temp);
+      //   break;
+      // }
+      // case GLFW_KEY_O: {
+      //   glm::vec3 temp = {0, -1, 0};
+      //   mainLight.updatePosition(temp);
+      //   break;
+      // }
+      // case GLFW_KEY_P: {
+      //   glm::vec3 temp = {0, 1, 0};
+      //   mainLight.updatePosition(temp);
+      //   break;
+      // }
+      // case GLFW_KEY_LEFT:
+      // {
+      //   glm::vec3 newcent = {spheres_scene[0].getCenter()[0] - 1, spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2]};
+      //   spheres_scene[0].changeCenter(newcent);
+      //   break;
+      // }
+      // case GLFW_KEY_RIGHT:
+      // {
+      //   glm::vec3 newcent = {spheres_scene[0].getCenter()[0] + 1, spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2]};
+      //   spheres_scene[0].changeCenter(newcent);
+      //   break;
+      // }
+      // case GLFW_KEY_UP:
+      // {
+      //   glm::vec3 newcent = {spheres_scene[0].getCenter()[0], spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2] - 1};
+      //   spheres_scene[0].changeCenter(newcent);
 
-        break;
-      }
-      case GLFW_KEY_DOWN:
-      {
-        glm::vec3 newcent = {spheres_scene[0].getCenter()[0], spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2] + 1};
-        spheres_scene[0].changeCenter(newcent);
-        break;
-      }
-      case GLFW_KEY_M: {
-        glm::vec3 newcent = {sphere1.getCenter()[0], sphere1.getCenter()[1] + 1, sphere1.getCenter()[2]};
-        sphere1.changeCenter(newcent);
-        break;
-      }
-      case GLFW_KEY_N: {
-        glm::vec3 newcent = {sphere1.getCenter()[0], sphere1.getCenter()[1] - 1, sphere1.getCenter()[2]};
-        sphere1.changeCenter(newcent);
-        break;
-      }
+      //   break;
+      // }
+      // case GLFW_KEY_DOWN:
+      // {
+      //   glm::vec3 newcent = {spheres_scene[0].getCenter()[0], spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2] + 1};
+      //   spheres_scene[0].changeCenter(newcent);
+      //   break;
+      // }
+      // case GLFW_KEY_M: {
+      //   glm::vec3 newcent = {sphere1.getCenter()[0], sphere1.getCenter()[1] + 1, sphere1.getCenter()[2]};
+      //   sphere1.changeCenter(newcent);
+      //   break;
+      // }
+      // case GLFW_KEY_N: {
+      //   glm::vec3 newcent = {sphere1.getCenter()[0], sphere1.getCenter()[1] - 1, sphere1.getCenter()[2]};
+      //   sphere1.changeCenter(newcent);
+      //   break;
+      // }
         // Unhandled
       default:
         std::cout << "Unhandled key: " << _key << std::endl;
