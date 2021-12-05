@@ -129,8 +129,22 @@ class Sphere {
   Material getM() {return material;}
   void setM(Material m) {material = m; }
   void changeCenter(glm::vec3 newCenter) { center = newCenter; }
-  void animateFrame(){
-    
+   void toggleAnimate()
+  {
+    if (animate) {animate = false;}
+    else {animate = true;}
+  }
+  void animateFrame(float fElapsedTime){
+    if (!animate) {return;}
+          center.x += animateConstant * fElapsedTime;
+          animateCenter += animateConstant *fElapsedTime;
+
+    if (animateCenter > 5) {
+      animateConstant = -1;
+    } 
+    else if (animateCenter < -5){
+      animateConstant = 1;
+    }
   }
 
   private:
