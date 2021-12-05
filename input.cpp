@@ -1,16 +1,15 @@
 
 #include <fstream>
-#include <iostream>
 #include "classes.h"
 void materialAndSphereInput(Plane& plane, Sphere& s) {
       std::ifstream input;
       input.open("materialsandsphere.txt");
-      glm::vec4 k_a;
-      glm::vec4 k_d;
-      glm::vec4 k_s;
-      glm::vec4 I_a;
-      glm::vec4 I_d;
-      glm::vec4 I_s;
+      glm::vec4 plane_k_a;
+      glm::vec4 plane_k_d;
+      glm::vec4 plane_k_s;
+      glm::vec4 plane_I_a;
+      glm::vec4 plane_I_d;
+      glm::vec4 plane_I_s;
       glm::vec3 spherePos;
       GLfloat val1;
       GLfloat val2;
@@ -22,54 +21,33 @@ void materialAndSphereInput(Plane& plane, Sphere& s) {
       while(input >> category >> type >> val1 >> val2 >> val3 >> val4) {
         if (category == "Plane") {
           if (type == "k_a") {
-            k_a = {val1, val2, val3, val4};
+            plane_k_a = {val1, val2, val3, val4};
           }
           if (type == "k_d") {
-            k_d = {val1, val2, val3, val4};
+            plane_k_d = {val1, val2, val3, val4};
           }
           if (type == "k_s") {
-            k_s = {val1, val2, val3, val4};
+            plane_k_s = {val1, val2, val3, val4};
           }
           if (type == "I_a") {
-            I_a = {val1, val2, val3, val4};
+            plane_I_a = {val1, val2, val3, val4};
           }
           if (type == "I_d") {
-            I_d = {val1, val2, val3, val4};
+            plane_I_d = {val1, val2, val3, val4};
           }
           if (type == "I_s") {
-            I_s = {val1, val2, val3, val4};
+            plane_I_s = {val1, val2, val3, val4};
           }
-          Material M(k_a, k_d, k_s, I_a, I_d, I_s);
-          plane.setM(M);
         }
         if (category == "Sphere") {
           if (type == "sphere_values") {
             radius = val1;
             spherePos = {val2, val3, val4};
           }
-          if (type == "k_a") {
-            k_a = {val1, val2, val3, val4};
-          }
-          if (type == "k_d") {
-            k_d = {val1, val2, val3, val4};
-          }
-          if (type == "k_s") {
-            k_s = {val1, val2, val3, val4};
-          }
-          if (type == "I_a") {
-            I_a = {val1, val2, val3, val4};
-          }
-          if (type == "I_d") {
-            I_d = {val1, val2, val3, val4};
-          }
-          if (type == "I_s") {
-            I_s = {val1, val2, val3, val4};
-          }
-          Material S(k_a, k_d, k_s, I_a, I_d, I_s);
-          s.change(radius, spherePos);
-          s.setM(S);
         }
-      }
+      }   
+      //plane.storeMaterials(plane_k_a, plane_k_d, plane_k_s, plane_I_a, plane_I_d, plane_I_s);
+      s = Sphere(radius, spherePos);
 }
 void sceneInput(Plane& plane, Camera& camera, Light& light) {
   std::ifstream input;

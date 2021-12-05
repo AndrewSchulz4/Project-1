@@ -1,1 +1,1 @@
-coloring.o: coloring.cpp coloring.h GLInclude.h classes.h collision.h
+coloring.o: coloring.cpp coloring.h GLInclude.h classes.h

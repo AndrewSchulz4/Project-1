@@ -45,13 +45,6 @@
         "xstddef": "cpp",
         "xstring": "cpp",
         "xtr1common": "cpp",
-        "xutility": "cpp",
-        "vector": "cpp",
-        "algorithm": "cpp",
-        "deque": "cpp",
-        "execution": "cpp",
-        "mutex": "cpp",
-        "numeric": "cpp",
-        "queue": "cpp"
+        "xutility": "cpp"
     }
 }

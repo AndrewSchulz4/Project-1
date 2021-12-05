@@ -10,7 +10,7 @@ OS = LINUX
 CC = g++ -std=c++14
 OPTS = -O3
 #OPTS = -g
-FLAGS = -Wall -Werror -fopenmp
+FLAGS = -Wall -Werror
 ifeq "$(OS)" "LINUX"
   DEFS = -DLINUX
 else
