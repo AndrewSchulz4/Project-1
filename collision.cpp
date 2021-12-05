@@ -35,7 +35,7 @@ Collisionpoint collision(Ray& ray, Plane& ground_plane)
         //plug t into ray equation to find collision point x (will have normal n)
         x = ray.getOrigin() + (t * ray.getDirection());
     }
-    Collisionpoint collis(x, ground_plane.getN());
+    Collisionpoint collis(x, ground_plane.getN(), ground_plane.getM());
     return collis;
         //cout << to_string(x) << endl;
 
@@ -72,7 +72,8 @@ Collisionpoint collision_sphere(Ray& ray, Sphere& sphere)
     if(collision < 0)
     {
       glm::vec3 zero = {0.0, 0.0, 0.0};
-      Collisionpoint nocollis(zero, zero);
+      Material M;
+      Collisionpoint nocollis(zero, zero, M);
       return nocollis;
     }
     else{
@@ -95,7 +96,7 @@ Collisionpoint collision_sphere(Ray& ray, Sphere& sphere)
       //finding collision point with nearest value of t (min)
       glm::vec3 x = origin + (min_t * direction);
       //glm::vec3 normal = (x-center)/radius;
-      Collisionpoint collis(x, ((x-sphere.getCenter())/sphere.getRadius()));
+      Collisionpoint collis(x, ((x-sphere.getCenter())/sphere.getRadius()), sphere.getM());
       return collis;
       //run ADS coloring to figure out color based on collision point normal and location
       //color(normal, ray)
