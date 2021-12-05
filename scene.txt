@@ -1,0 +1,11 @@
+Plane plane_normal 0.0 1.0 0.0 
+Plane plane_point 0.0 -1.0 0.0
+Camera camera_position 0.0 10.0 0.0
+Camera camera_viewDirection 0.0 0.0 -1.0
+Camera camera_up 0.0 0.0 0.0
+Camera camera_right 1.0 0.0 0.0
+Light light_position 0.0 10.0 -15.0
+Camera camera_LR -1.5 1.5 0.0
+Camera camera_TB 1.0 -1.0 0.0
+Camera camera_D 1.0 0.0 0.0
+Light light_type 1 1 1
