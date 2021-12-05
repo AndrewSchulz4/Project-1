@@ -129,8 +129,13 @@ class Sphere {
   Material getM() {return material;}
   void setM(Material m) {material = m; }
   void changeCenter(glm::vec3 newCenter) { center = newCenter; }
+  void animateFrame(){
+    
+  }
 
   private:
+  
+
   float radius;
   glm::vec3 center;
   Material material;
