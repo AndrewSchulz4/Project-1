@@ -1,4 +1,6 @@
 //This function to be called from a for loop in main
+#include "raygen.h"
+
 Ray raygen (Camera& cam, glm::vec3 cameraPos, int i, int j, int max_wid, int max_height, int view) {
             // glm::vec3 viewDirection = {0, 0, -1}; //Temp for now
             // glm::vec3 up = {0,1,0};

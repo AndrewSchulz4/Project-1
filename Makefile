@@ -10,7 +10,7 @@ OS = LINUX
 CC = g++ -std=c++14
 OPTS = -O3
 #OPTS = -g
-FLAGS = -Wall -Werror
+FLAGS = -Wall -Werror -fopenmp
 ifeq "$(OS)" "LINUX"
   DEFS = -DLINUX
 else
@@ -38,7 +38,7 @@ INCL = $(GL_INCL)
 LIBS = $(GL_LIBS)
 
 OBJS = \
-       main.o
+       main.o input.o coloring.o properraygen.o collision.o
 
 DEPS = ${OBJS:%.o=%.d}
 
