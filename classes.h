@@ -75,12 +75,14 @@ class Ray {
 };
 class Material {
   public:
-    void setM(glm::vec4 k_A, glm::vec4 k_D, glm::vec4 k_S, glm::vec4 I_A, glm::vec4 I_D, glm::vec4 I_S) { k_a = k_A; 
+    void setM(glm::vec4 k_A, glm::vec4 k_D, glm::vec4 k_S, glm::vec4 I_A, glm::vec4 I_D, glm::vec4 I_S, GLfloat rho) { k_a = k_A; 
     k_d = k_D;  
     k_s = k_S; 
     I_a = I_A; 
     I_d = I_D; 
-    I_s = I_S; }
+    I_s = I_S;
+    rho = rho;
+     }
   Material() {}
   glm::vec4 get_k_a() {return k_a;}
   glm::vec4 get_k_d() {return k_d;}
@@ -88,7 +90,9 @@ class Material {
   glm::vec4 get_I_a() {return I_a;}
   glm::vec4 get_I_d() {return I_d;}
   glm::vec4 get_I_s() {return I_s;}
+  GLfloat getRho() {return rho;}
   Material(glm::vec4 k_a, glm::vec4 k_d, glm::vec4 k_s, glm::vec4 I_a, glm::vec4 I_d, glm::vec4 I_s) : k_a(k_a), I_a(I_a), k_d(k_d), I_d(I_d), k_s(k_s), I_s(I_s) {}
+  Material(glm::vec4 k_a, glm::vec4 k_d, glm::vec4 k_s, glm::vec4 I_a, glm::vec4 I_d, glm::vec4 I_s, GLfloat rho) : k_a(k_a), I_a(I_a), k_d(k_d), I_d(I_d), k_s(k_s), I_s(I_s), rho(rho) {}
   private:
   glm::vec4 k_a;
   glm::vec4 I_a;
@@ -96,6 +100,7 @@ class Material {
   glm::vec4 I_d;
   glm::vec4 k_s;
   glm::vec4 I_s;
+  GLfloat rho = 100.0f;
 };
 
 class Plane {
@@ -142,5 +147,16 @@ class Collisionpoint {
   glm::vec3 position;
   glm::vec3 normal;
   Material material;
+};
+
+class Shadow {
+  public:
+  Shadow(GLfloat dist, bool inshade) : dist(dist), inshade(inshade) {};
+  GLfloat occlusion() {return dist;}
+  bool shade() {return inshade;}
+
+  private:
+  GLfloat dist;
+  bool inshade;
 };
 #endif

@@ -21,15 +21,10 @@ Collisionpoint collision(Ray& ray, Plane& ground_plane)
 
     //a == center of plane? , n = normal to plane held in Plane
 
-    //colliison occurs if d.n != 0 and t > 0
+    //collisison occurs if d.n != 0 and t > 0
 
     static size_t i = 0;
-    //  std::cout << "Ray i: " << i << std::endl;
-    //   std::cout << ray.getOrigin() << " , " << ray.getDirection() << std::endl;
-
-    //std::cout << "Plane p " << ground_plane.getP() << " , " << ground_plane.getN() << std::endl;
-   // std::cout << "n_dot_d " << n_dot_d << " , " << ap_dot_n << " , " << t << std::endl;
-
+    
     if(n_dot_d != 0 && t > 0)
     {
         //plug t into ray equation to find collision point x (will have normal n)
@@ -37,7 +32,6 @@ Collisionpoint collision(Ray& ray, Plane& ground_plane)
     }
     Collisionpoint collis(x, ground_plane.getN(), ground_plane.getM());
     return collis;
-        //cout << to_string(x) << endl;
 
   }
 

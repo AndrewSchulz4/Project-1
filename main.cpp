@@ -89,7 +89,7 @@ initialize(GLFWwindow* _window) {
     spheres_scene.push_back(S2);
     spheres_scene.push_back(sphere1);
     lights.push_back(mainLight);
-    glm::vec3 lightpos = {10, 7, -5};
+    glm::vec3 lightpos = {10, 5, -10};
     Light light1(0, lightpos);
     lights.push_back(light1);
 
@@ -162,10 +162,10 @@ draw(GLFWwindow* _window, double _currentTime) {
 
           //if plane is hit
           if (hitPlane.getPosition() != zero){
-            bool shadow = inShadow(hitPlane, lights, spheres_scene);
-            if(shadow){
+            Shadow shadow = inShadow(hitPlane, lights, spheres_scene);
+            if(shadow.shade()){
               glm::vec3 toLight = glm::normalize(mainLight.getPosition() - hitPlane.getPosition());
-              glm::vec3 ambient = (hitPlane.materialv().get_k_a() * hitPlane.materialv().get_I_a());
+              glm::vec3 ambient =  (hitPlane.materialv().get_k_a() * hitPlane.materialv().get_I_a()); //* shadow.occlusion()
               g_frame[(row*g_width) + col] = glm::vec4(ambient[0], ambient[1], ambient[2], 1.0f);
             }
             else {
@@ -290,71 +290,61 @@ keyCallback(GLFWwindow* _window, int _key, int _scancode,
         break;
 
       }
-      // case GLFW_KEY_I: {
-      //   glm::vec3 temp = {0, 0, -1};
-      //   mainLight.updatePosition(temp);
-      //   break;
-      // }
-      // case GLFW_KEY_J: {
-      //   glm::vec3 temp = {-1, 0, 0};
-      //   mainLight.updatePosition(temp);
-      //   break;
-      // }
-      // case GLFW_KEY_K: {
-      //   glm::vec3 temp = {0, 0, 1};
-      //   mainLight.updatePosition(temp);
-      //   break;
-      // }
-      // case GLFW_KEY_L: {
-      //   glm::vec3 temp = {1, 0, 0};
-      //   mainLight.updatePosition(temp);
-      //   break;
-      // }
-      // case GLFW_KEY_O: {
-      //   glm::vec3 temp = {0, -1, 0};
-      //   mainLight.updatePosition(temp);
-      //   break;
-      // }
-      // case GLFW_KEY_P: {
-      //   glm::vec3 temp = {0, 1, 0};
-      //   mainLight.updatePosition(temp);
-      //   break;
-      // }
-      // case GLFW_KEY_LEFT:
-      // {
-      //   glm::vec3 newcent = {spheres_scene[0].getCenter()[0] - 1, spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2]};
-      //   spheres_scene[0].changeCenter(newcent);
-      //   break;
-      // }
-      // case GLFW_KEY_RIGHT:
-      // {
-      //   glm::vec3 newcent = {spheres_scene[0].getCenter()[0] + 1, spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2]};
-      //   spheres_scene[0].changeCenter(newcent);
-      //   break;
-      // }
-      // case GLFW_KEY_UP:
-      // {
-      //   glm::vec3 newcent = {spheres_scene[0].getCenter()[0], spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2] - 1};
-      //   spheres_scene[0].changeCenter(newcent);
+      case GLFW_KEY_I: {
+        glm::vec3 temp = {0, 0, -1};
+        lights[0].updatePosition(temp);
+        break;
+      }
+      case GLFW_KEY_J: {
+        glm::vec3 temp = {-1, 0, 0};
+        lights[0].updatePosition(temp);
+        break;
+      }
+      case GLFW_KEY_K: {
+        glm::vec3 temp = {0, 0, 1};
+        lights[0].updatePosition(temp);
+        break;
+      }
+      case GLFW_KEY_L: {
+        glm::vec3 temp = {1, 0, 0};
+        lights[0].updatePosition(temp);
+        break;
+      }
+      case GLFW_KEY_O: {
+        glm::vec3 temp = {0, -1, 0};
+        lights[0].updatePosition(temp);
+        break;
+      }
+      case GLFW_KEY_P: {
+        glm::vec3 temp = {0, 1, 0};
+        lights[0].updatePosition(temp);
+        break;
+      }
+      case GLFW_KEY_LEFT:
+      {
+        glm::vec3 newcent = {spheres_scene[0].getCenter()[0] - 1, spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2]};
+        spheres_scene[0].changeCenter(newcent);
+        break;
+      }
+      case GLFW_KEY_RIGHT:
+      {
+        glm::vec3 newcent = {spheres_scene[0].getCenter()[0] + 1, spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2]};
+        spheres_scene[0].changeCenter(newcent);
+        break;
+      }
+      case GLFW_KEY_UP:
+      {
+        glm::vec3 newcent = {spheres_scene[0].getCenter()[0], spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2] - 1};
+        spheres_scene[0].changeCenter(newcent);
 
-      //   break;
-      // }
-      // case GLFW_KEY_DOWN:
-      // {
-      //   glm::vec3 newcent = {spheres_scene[0].getCenter()[0], spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2] + 1};
-      //   spheres_scene[0].changeCenter(newcent);
-      //   break;
-      // }
-      // case GLFW_KEY_M: {
-      //   glm::vec3 newcent = {sphere1.getCenter()[0], sphere1.getCenter()[1] + 1, sphere1.getCenter()[2]};
-      //   sphere1.changeCenter(newcent);
-      //   break;
-      // }
-      // case GLFW_KEY_N: {
-      //   glm::vec3 newcent = {sphere1.getCenter()[0], sphere1.getCenter()[1] - 1, sphere1.getCenter()[2]};
-      //   sphere1.changeCenter(newcent);
-      //   break;
-      // }
+        break;
+      }
+      case GLFW_KEY_DOWN:
+      {
+        glm::vec3 newcent = {spheres_scene[0].getCenter()[0], spheres_scene[0].getCenter()[1], spheres_scene[0].getCenter()[2] + 1};
+        spheres_scene[0].changeCenter(newcent);
+        break;
+      }
         // Unhandled
       default:
         std::cout << "Unhandled key: " << _key << std::endl;

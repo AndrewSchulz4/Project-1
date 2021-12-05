@@ -65,7 +65,8 @@ void materialAndSphereInput(Plane& plane, Sphere& s) {
           if (type == "I_s") {
             I_s = {val1, val2, val3, val4};
           }
-          Material S(k_a, k_d, k_s, I_a, I_d, I_s);
+          GLfloat rho = 4.0f;
+          Material S(k_a, k_d, k_s, I_a, I_d, I_s, rho);
           s.change(radius, spherePos);
           s.setM(S);
         }

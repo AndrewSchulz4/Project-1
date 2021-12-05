@@ -5,5 +5,4 @@
 
 Collisionpoint collision(Ray& ray, Plane& ground_plane);
 Collisionpoint collision_sphere(Ray& ray, Sphere& sphere);
-
 #endif
