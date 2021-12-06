@@ -20,6 +20,7 @@ Bugs
 Odd lighting (sphere looked shinier and appeared to have gradient, fixed) - John
 GLXBadConfig and segfault issues when setting up rasterizer (fixed) - Darin
 Issue with ray generation (fixed) - John
+rendering order(depth) (fixed) - Andrew
 
 Incomplete Features
 soft shadows - Andrew

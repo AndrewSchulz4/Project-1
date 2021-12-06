@@ -34,7 +34,7 @@ std::vector<Light> lights;
 std::vector<Sphere> spheres_scene;
 
 // Window
-int g_width{900};
+int g_width{1360};
 int g_height{768};
 
 // Framebuffer
@@ -81,9 +81,9 @@ initialize(GLFWwindow* _window) {
     glm::vec4 k_a2 = {1.0f, 1.0f, 0.2f, 1.0f};
     Material mat(k_a, k_d, k_s, I_a, I_d, I_s);    
     Material mat2(k_a2, k_a2, k_s, I_a, I_d, I_s);
-    glm::vec3 center = {-5.0f, 2.0f, -25.0f};
+    glm::vec3 center = {15.0f, 4.0f, -15.0f};
     glm::vec3 center2 = {5.0f, 2.0f, -20.0f};
-    Sphere S(5, center, mat);
+    Sphere S(1, center, mat);
     Sphere S2(3, center2, mat2);
     spheres_scene.push_back(S);
     spheres_scene.push_back(S2);
@@ -159,6 +159,32 @@ draw(GLFWwindow* _window, double _currentTime) {
             }
           }
         }
+        //below works for rendering order but shadows are weird if sphere is under plane, will just restrict sphere movement to above plane
+        //if both are hit
+        // if(hitSphere.getPosition() != zero && hitPlane.getPosition() != zero)
+        // {
+        //   //if sphere collision is closer
+        //     if(distance(mainCamera.getPosition(), hitSphere.getPosition()) < distance(mainCamera.getPosition(), hitPlane.getPosition()))
+        //     {
+        //       g_frame[(row*g_width) + col] = color(hitSphere, mainCamera, lights);
+        //       continue;
+        //     }
+        //     else
+        //     {
+        //       Shadow shadow = inShadow(hitPlane, lights, spheres_scene);
+        //     if(shadow.shade()){
+        //       glm::vec3 toLight = glm::normalize(mainLight.getPosition() - hitPlane.getPosition());
+        //       glm::vec3 ambient =  (hitPlane.materialv().get_k_a() * hitPlane.materialv().get_I_a()); //* shadow.occlusion()
+        //       g_frame[(row*g_width) + col] = glm::vec4(ambient[0], ambient[1], ambient[2], 1.0f);
+        //       continue;
+        //     }
+        //     else {
+        //       //if not in shadow color normally
+        //       g_frame[(row*g_width)+col] = color(hitPlane, mainCamera, lights);
+        //       continue;
+        //     }
+        //     }
+        // }
 
           //if plane is hit
           if (hitPlane.getPosition() != zero){
@@ -360,8 +386,10 @@ keyCallback(GLFWwindow* _window, int _key, int _scancode,
       }
       case GLFW_KEY_N:
       {
+        if(spheres_scene[0].getCenter()[1] >= spheres_scene[0].getRadius()){
         glm::vec3 newcent = {spheres_scene[0].getCenter()[0], spheres_scene[0].getCenter()[1] - 1, spheres_scene[0].getCenter()[2]};
         spheres_scene[0].changeCenter(newcent);
+        }
         break;
       }
 
