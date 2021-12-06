@@ -122,7 +122,7 @@ private:
 class Sphere {
   public:
   Sphere() {};
-  Sphere(int radius, glm::vec3 center, Material material) : radius(radius), center(center), material(material) {}
+  Sphere(int radius, glm::vec3 center, Material material) : radius(radius), center(center), material(material) {animate = true; animateCenter = 1; animateConstant = 1;}
   void change(float r, glm::vec3 c) {radius = r; center = c;}
   float getRadius() { return radius; }
   glm::vec3 getCenter() { return center; }
@@ -148,7 +148,9 @@ class Sphere {
   }
 
   private:
-  
+  bool animate;
+  float animateConstant;
+  float animateCenter;
 
   float radius;
   glm::vec3 center;

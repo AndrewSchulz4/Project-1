@@ -222,9 +222,11 @@ run(GLFWwindow* _window) {
     g_framesPerSecond = 1.f/(g_delay + g_frameRate);
     printf("FPS: %6.2f\n", g_framesPerSecond);
 
-    for (int i = 0; i < vector.size(); i++0){
-      spheres_scene[i].animateFrame(g_frameRate);
-   }
+    spheres_scene[1].animateFrame(g_frameRate);
+   // spheres_scene[2].animateFrame(g_frameRate);
+    //for (int i = 0; i < spheres_scene.size(); i++){
+     // spheres_scene[i].animateFrame(g_frameRate);
+   //}
     
 
     ////////////////////////////////////////////////////////////////////////////
