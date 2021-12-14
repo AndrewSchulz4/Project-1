@@ -1,0 +1,40 @@
+--------------------------------------------------------------------------------
+-- Base Grade Information
+--------------------------------------------------------------------------------
+
+ Checkpoints:                                                              25/25
+    Features:                                                              50/50
+      Extras:                                                              11/15
+Presentation:                                                              44/50
+________________________________________________________________________________
+  Deductions:                                                                -13
+________________________________________________________________________________
+      Total:                                                             117/140
+
+--------------------------------------------------------------------------------
+-- Comments
+--------------------------------------------------------------------------------
+
+* Base Features Claimed *
+
++10 - Reading scene from external file
++10 - Ray generation in Perspective View
++10 - Collision of rays with plane and sphere
++10 - ADS Lighting from a single point light
++10 - Shadow determination in lighting computations
+
+* Extras Claimed *
+
++2 - User input to manipulate scene
++1 - Linear attenuation (+2-1 for not reading params from file)
++2 - Multiple lights
++2 - Orthographic view
++2 - Basic animation
++2 - Experimenting with parallelism, soft shadows, light types
+
+* Deductions *
+
+-2 External file name is hard coded.
+-3 Multiple spheres are not able to be read from a file.
+-3 Lights do not have intensity values (incorrectly associated with material).
+-5 Shadowing is incorrect because bounds on shadow rays are not checked.
